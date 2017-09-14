@@ -1,4 +1,4 @@
-package controllers.ToVo1;
+package tracks.singlePlayer.phillipAgents.ToVo1;
 
 import core.game.StateObservation;
 import ontology.Types;

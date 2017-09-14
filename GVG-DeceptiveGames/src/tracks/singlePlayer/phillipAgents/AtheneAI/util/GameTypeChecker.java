@@ -1,15 +1,14 @@
-package controllers.AtheneAI.util;
+package tracks.singlePlayer.phillipAgents.AtheneAI.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ontology.Types;
+import core.game.Observation;
+import core.game.StateObservation;
 import ontology.Types.ACTIONS;
 import tools.ElapsedCpuTimer;
 import tools.Vector2d;
-import controllers.AtheneAI.Agent;
-import core.game.Observation;
-import core.game.StateObservation;
+import tracks.singlePlayer.phillipAgents.AtheneAI.Agent;
 
 public final class GameTypeChecker {
 
@@ -22,16 +21,14 @@ public final class GameTypeChecker {
 	 *            Timer when the action returned is due.
 	 * @return true if game is deterministic, false if game is stochastic
 	 */
-	public final static boolean isGameDeterministic(StateObservation so,
-			ElapsedCpuTimer elapsedTimer) {
+	public final static boolean isGameDeterministic(StateObservation so, ElapsedCpuTimer elapsedTimer) {
 
 		ElapsedCpuTimer localTimer = new ElapsedCpuTimer();
 
 		StateObservation soInit = so.copy();
 		/*
-		 * Small initialization with 5x ACTION_NIL for steady-state.
-		 * Is the game already over after this?
-		 * Yes -> Stochastic Approach
+		 * Small initialization with 5x ACTION_NIL for steady-state. Is the game already
+		 * over after this? Yes -> Stochastic Approach
 		 */
 		for (int i = 0; i < 5; i++) {
 			soInit.advance(ACTIONS.ACTION_NIL);
@@ -39,64 +36,54 @@ public final class GameTypeChecker {
 				so.advance(ACTIONS.ACTION_NIL);
 			} else {
 				System.out.println(" stochastic_quick_game");
-				System.out.println(" Check for determinisation took: "
-						+ localTimer.elapsedMillis() + "ms");
+				System.out.println(" Check for determinisation took: " + localTimer.elapsedMillis() + "ms");
 				return false;
 			}
 		}
 
 		/*
-		 * State after initialization is saved and taken as a starting point for
-		 * further simulations.
+		 * State after initialization is saved and taken as a starting point for further
+		 * simulations.
 		 */
 		StateObservation soSave = so.copy();
 
 		/*
-		 * Does the game have NPCs?
-		 * Yes -> Stochastic Approach
+		 * Does the game have NPCs? Yes -> Stochastic Approach
 		 */
 		if (soSave.getNPCPositions() != null) {
 			System.out.println(" stochastic_has_npcs");
-			System.out.println(" Check for determinisation took: "
-					+ localTimer.elapsedMillis() + "ms");
+			System.out.println(" Check for determinisation took: " + localTimer.elapsedMillis() + "ms");
 			return false;
 		}
 
 		for (int i = 0; i < 150; i++) {
 			so.advance(ACTIONS.ACTION_NIL);
 			/*
-			 * Is the game over within the first 25 iterations?
-			 * Yes -> Stochastic Approach.
+			 * Is the game over within the first 25 iterations? Yes -> Stochastic Approach.
 			 */
 			if (i < 25 && so.isGameOver()) {
 				System.out.println(" stochastic_quick_game");
-				System.out.println(" Check for determinisation took: "
-						+ localTimer.elapsedMillis() + "ms");
+				System.out.println(" Check for determinisation took: " + localTimer.elapsedMillis() + "ms");
 				return false;
 			}
 			/*
-			 * Does the gamestate change even if we apply ACTION_NIL?
-			 * Yes -> Stochastic Approach
+			 * Does the gamestate change even if we apply ACTION_NIL? Yes -> Stochastic
+			 * Approach
 			 */
 			if (i % 10 == 0) {
 				if (!equiv(so, soSave)) {
 					System.out.println(" stochastic_not_equiv");
-					System.out.println(" Check for determinisation took: "
-							+ localTimer.elapsedMillis() + "ms");
+					System.out.println(" Check for determinisation took: " + localTimer.elapsedMillis() + "ms");
 					return false;
 				}
 			}
 			/*
-			 * Does the game only have dynamic movables?
-			 * Yes -> Stochastic Approach
+			 * Does the game only have dynamic movables? Yes -> Stochastic Approach
 			 */
 			if (!Agent.hasOnlyDynamicMovables
-					&& !hasConsistentMovable(
-							so.getMovablePositions(),
-							soSave.getMovablePositions())) {
+					&& !hasConsistentMovable(so.getMovablePositions(), soSave.getMovablePositions())) {
 				System.out.println(" stochastic_has_dynamic_movables");
-				System.out.println(" Check for determinisation took: "
-						+ localTimer.elapsedMillis() + "ms");
+				System.out.println(" Check for determinisation took: " + localTimer.elapsedMillis() + "ms");
 				Agent.hasOnlyDynamicMovables = true;
 				return false;
 			}
@@ -104,8 +91,7 @@ public final class GameTypeChecker {
 			 * Flag dynamic movables in agent.
 			 */
 			if (i % 25 == 0) {
-				findDynamicMovables(so.getMovablePositions(),
-						soSave.getMovablePositions());
+				findDynamicMovables(so.getMovablePositions(), soSave.getMovablePositions());
 			}
 			/*
 			 * Flag useless immovables in agent.
@@ -116,12 +102,11 @@ public final class GameTypeChecker {
 		}
 
 		/*
-		 * Everything we associate with stochastic games wasn't present.
-		 * Therefore try a deterministic approach
+		 * Everything we associate with stochastic games wasn't present. Therefore try a
+		 * deterministic approach
 		 */
 		System.out.println(" deterministic");
-		System.out.println(" Check for determinisation took: "
-				+ localTimer.elapsedMillis() + "ms");
+		System.out.println(" Check for determinisation took: " + localTimer.elapsedMillis() + "ms");
 		return true;
 	}
 
@@ -186,8 +171,7 @@ public final class GameTypeChecker {
 	 */
 	public final static boolean doubleMovesNeeded(StateObservation stateObs) {
 		Vector2d initialPos = stateObs.getAvatarPosition();
-		ACTIONS initialDirection = Util.getDirection(stateObs
-				.getAvatarOrientation());
+		ACTIONS initialDirection = Util.getDirection(stateObs.getAvatarOrientation());
 		StateObservation test = stateObs.copy();
 
 		if (initialDirection == ACTIONS.ACTION_NIL) {
@@ -217,8 +201,7 @@ public final class GameTypeChecker {
 	/**
 	 * Checks whether there is at least one movable that isn't dynamic.
 	 */
-	private final static boolean hasConsistentMovable(
-			ArrayList<Observation>[] a, ArrayList<Observation>[] b) {
+	private final static boolean hasConsistentMovable(ArrayList<Observation>[] a, ArrayList<Observation>[] b) {
 		if (a == null && b == null) {
 			return true;
 		} else if (a == null || b == null) {
@@ -237,10 +220,8 @@ public final class GameTypeChecker {
 						boolean bContainsAObs = false;
 						for (int l = 0; l < b[j].size(); l++) {
 							Observation bObs = b[j].get(l);
-							if (aObs.category == bObs.category
-									&& aObs.itype == bObs.itype
-									&& aObs.position.x == bObs.position.x
-									&& aObs.position.y == bObs.position.y)
+							if (aObs.category == bObs.category && aObs.itype == bObs.itype
+									&& aObs.position.x == bObs.position.x && aObs.position.y == bObs.position.y)
 								bContainsAObs = true;
 						}
 						if (!bContainsAObs)
@@ -257,12 +238,10 @@ public final class GameTypeChecker {
 	}
 
 	/**
-	 * Flags all movables that shouldn't be checked in BFS. A movable shouldn't
-	 * be checked if its of dynamic nature, since it makes useful hashing
-	 * impossible.
+	 * Flags all movables that shouldn't be checked in BFS. A movable shouldn't be
+	 * checked if its of dynamic nature, since it makes useful hashing impossible.
 	 */
-	private final static void findDynamicMovables(ArrayList<Observation>[] a,
-			ArrayList<Observation>[] b) {
+	private final static void findDynamicMovables(ArrayList<Observation>[] a, ArrayList<Observation>[] b) {
 		if (a == null && b == null) {
 			return;
 		} else if (a == null || b == null) {
@@ -280,16 +259,13 @@ public final class GameTypeChecker {
 					boolean bContainsAObs = false;
 					for (int l = 0; l < b[i].size(); l++) {
 						Observation bObs = b[i].get(l);
-						if (aObs.category == bObs.category
-								&& aObs.itype == bObs.itype
-								&& aObs.position.x == bObs.position.x
-								&& aObs.position.y == bObs.position.y)
+						if (aObs.category == bObs.category && aObs.itype == bObs.itype
+								&& aObs.position.x == bObs.position.x && aObs.position.y == bObs.position.y)
 							bContainsAObs = true;
 					}
 					if (!bContainsAObs) {
 						System.out.println("Ignore dynamic movable " + a[i].get(k).itype);
-						Agent.ignoredSprites
-								.add(new Integer(a[i].get(k).itype));
+						Agent.ignoredSprites.add(new Integer(a[i].get(k).itype));
 					}
 				}
 			}
@@ -297,9 +273,8 @@ public final class GameTypeChecker {
 	}
 
 	/**
-	 * Flags all immovables that shouldn't be checked in BFS. A immovable
-	 * shouldn't be checked if there are too many of it ( and therefore probably
-	 * useless ).
+	 * Flags all immovables that shouldn't be checked in BFS. A immovable shouldn't
+	 * be checked if there are too many of it ( and therefore probably useless ).
 	 * 
 	 * TODO: Improve check
 	 */
@@ -314,8 +289,7 @@ public final class GameTypeChecker {
 		}
 	}
 
-	private static boolean areObservationsEqual(Observation _this,
-			Observation _that) {
+	private static boolean areObservationsEqual(Observation _this, Observation _that) {
 		if (_this.itype != _that.itype)
 			return false;
 		if (_this.position.x != _that.position.x)

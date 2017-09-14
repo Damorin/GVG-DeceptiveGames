@@ -37,6 +37,8 @@ public class Test {
 		String adrienctx = "tracks.singlePlayer.phillipAgents.adrienctx.Agent";
 		String novtea = "tracks.singlePlayer.phillipAgents.NovTea.Agent";
 		String ybcriber = "tracks.singlePlayer.phillipAgents.YBCriber.Agent";
+		String thorbjrn = "tracks.singlePlayer.phillipAgents.thorbjrn.Agent";
+		String teamtopbug = "tracks.singlePlayer.phillipAgents.teamtopbug.Agent";
 
 		// Deceptive Games Agents
 		String deceptiveAgents[] = new String[] { sampleRandomController, sampleMCTSController, sampleRHEAController,
@@ -92,7 +94,7 @@ public class Test {
 		int seed = new Random().nextInt();
 
 		// Game and level to play
-		int gameIdx = 0;
+		int gameIdx = 2;
 		int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
 		// String game = gamesPath + games[gameIdx] + ".txt";
 		// String level1 = gamesPath + games[gameIdx] + "_lvl" + levelIdx + ".txt";
@@ -111,7 +113,7 @@ public class Test {
 		// 2. This plays a game in a level by the controller.
 		int M = 10;
 		for (int i = 0; i < M; i++) {
-			ArcadeMachine.runOneGame(game, level1, visuals, ybcriber, recordActionsFile, seed, 0);
+			ArcadeMachine.runOneGame(game, level1, visuals, thorbjrn, recordActionsFile, seed, 0);
 		}
 
 		// 3. This replays a game from an action file previously recorded

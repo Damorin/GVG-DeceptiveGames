@@ -1,4 +1,4 @@
-package controllers.Heuristics;
+package tracks.singlePlayer.phillipAgents.Heuristics;
 
 import core.game.Observation;
 import core.game.StateObservation;

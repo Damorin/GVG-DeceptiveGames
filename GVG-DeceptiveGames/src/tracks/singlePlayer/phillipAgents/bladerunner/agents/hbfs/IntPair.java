@@ -1,16 +1,16 @@
-package controllers.bladerunner.agents.hbfs;
+package tracks.singlePlayer.phillipAgents.bladerunner.agents.hbfs;
 
 public class IntPair implements Comparable<IntPair> {
 
 	public int a;
 	public int b;
-	
+
 	public IntPair(int a, int b) {
 		super();
 		this.a = a;
 		this.b = b;
 	}
-	
+
 	@Override
 	public int compareTo(IntPair o) {
 		if (a > o.a) {
@@ -25,16 +25,13 @@ public class IntPair implements Comparable<IntPair> {
 			}
 		} else { // a < o.a
 			return -1;
-		}	
+		}
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		IntPair p = (IntPair) obj;
 		return p.a == a && p.b == b;
 	}
-	
-	
-	
-	
+
 }

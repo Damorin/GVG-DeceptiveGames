@@ -1,7 +1,7 @@
-package controllers.AtheneAI.search.dfs;
+package tracks.singlePlayer.phillipAgents.AtheneAI.search.dfs;
 
-import ontology.Types;
 import core.game.StateObservation;
+import ontology.Types;
 
 public class DFSNode {
 	protected final StateObservation state;
@@ -9,8 +9,7 @@ public class DFSNode {
 	protected final int depth;
 	protected final Types.ACTIONS lastAction;
 
-	public DFSNode(StateObservation state, DFSNode parent, int depth,
-			Types.ACTIONS lastAction) {
+	public DFSNode(StateObservation state, DFSNode parent, int depth, Types.ACTIONS lastAction) {
 		this.state = state;
 		this.parent = parent;
 		this.depth = depth;

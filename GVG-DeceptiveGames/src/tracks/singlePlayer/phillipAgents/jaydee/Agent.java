@@ -1,18 +1,17 @@
-package controllers.jaydee;
+package tracks.singlePlayer.phillipAgents.jaydee;
 
-import controllers.jaydee.TreeSearch.DBS;
-import controllers.jaydee.TreeSearch.GA;
-import controllers.jaydee.TreeSearch.MCTS;
-import controllers.jaydee.TreeSearch.TreeSearch;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.Random;
+import java.util.Stack;
+
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Vector2d;
-
-import java.awt.*;
-import java.util.Random;
-import java.util.Stack;
+import tracks.singlePlayer.phillipAgents.jaydee.TreeSearch.GA;
+import tracks.singlePlayer.phillipAgents.jaydee.TreeSearch.TreeSearch;
 
 
 public class Agent extends AbstractPlayer {

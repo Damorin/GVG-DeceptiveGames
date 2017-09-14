@@ -1,4 +1,4 @@
-package controllers.AIJim;
+package tracks.singlePlayer.phillipAgents.AIJim;
 
 import tools.Vector2d;
 import core.game.Observation;

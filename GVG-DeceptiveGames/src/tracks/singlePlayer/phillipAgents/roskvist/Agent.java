@@ -1,4 +1,4 @@
-package controllers.roskvist;
+package tracks.singlePlayer.phillipAgents.roskvist;
 import core.game.Observation;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;

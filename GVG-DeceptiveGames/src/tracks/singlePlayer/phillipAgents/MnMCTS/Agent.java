@@ -1,4 +1,4 @@
-package controllers.MnMCTS;
+package tracks.singlePlayer.phillipAgents.MnMCTS;
 
 import core.game.Observation;
 import core.game.StateObservation;

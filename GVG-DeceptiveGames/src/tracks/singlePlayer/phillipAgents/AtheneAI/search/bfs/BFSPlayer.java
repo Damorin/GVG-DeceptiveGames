@@ -1,4 +1,4 @@
-package controllers.AtheneAI.search.bfs;
+package tracks.singlePlayer.phillipAgents.AtheneAI.search.bfs;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+import core.game.Observation;
+import core.game.StateObservation;
 import ontology.Types;
 import ontology.Types.ACTIONS;
 import tools.ElapsedCpuTimer;
-import controllers.AtheneAI.Agent;
-import controllers.AtheneAI.util.MurmurHash;
-import core.game.Observation;
-import core.game.StateObservation;
+import tracks.singlePlayer.phillipAgents.AtheneAI.Agent;
+import tracks.singlePlayer.phillipAgents.AtheneAI.util.MurmurHash;
 
 public final class BFSPlayer {
 
@@ -76,8 +76,7 @@ public final class BFSPlayer {
 	 * @param currentIteration
 	 * @return
 	 */
-	public final void solve(StateObservation root,
-			ElapsedCpuTimer elapsedTimer, long minRemainingTime) {
+	public final void solve(StateObservation root, ElapsedCpuTimer elapsedTimer, long minRemainingTime) {
 
 		MIN_REMAINING_TIME = minRemainingTime;
 		adjustStepCostAdvanced();
@@ -97,8 +96,7 @@ public final class BFSPlayer {
 		}
 
 		if (open.isEmpty()) {
-			BFSNode rootNode = new BFSNode(root.copy(), 0, "",
-					root.getAvailableActions());
+			BFSNode rootNode = new BFSNode(root.copy(), 0, "", root.getAvailableActions());
 			open.add(rootNode);
 			openHash.add(hash(rootNode.state));
 		}
@@ -142,13 +140,12 @@ public final class BFSPlayer {
 	}
 
 	/**
-	 * Given a list of possible actions and a node, it chooses all action and
-	 * adds the resulting childNodes to the open queue.
+	 * Given a list of possible actions and a node, it chooses all action and adds
+	 * the resulting childNodes to the open queue.
 	 * 
 	 * @param elapsedTimer
 	 */
-	private final boolean chooseAllActions(BFSNode n,
-			ElapsedCpuTimer elapsedTimer) {
+	private final boolean chooseAllActions(BFSNode n, ElapsedCpuTimer elapsedTimer) {
 		ArrayList<ACTIONS> possibleActions = n.availableActions;
 
 		while (!possibleActions.isEmpty()) {
@@ -164,14 +161,12 @@ public final class BFSPlayer {
 			if (!closed.contains(hash) && !openHash.contains(hash)) {
 				if (elapsedTimer.remainingTimeMillis() <= MIN_REMAINING_TIME) {
 					/*
-					 * not enough time for the following operations, better
-					 * return at a later point
+					 * not enough time for the following operations, better return at a later point
 					 */
 					return false;
 				}
 				possibleActions.remove(index);
-				BFSNode succ = new BFSNode(s, n.depth + 1, n.trace
-						+ actionToString(a), s.getAvailableActions());
+				BFSNode succ = new BFSNode(s, n.depth + 1, n.trace + actionToString(a), s.getAvailableActions());
 				nodesAdded++;
 
 				if (isGoalState(s)) {
@@ -190,30 +185,26 @@ public final class BFSPlayer {
 							Agent.goalTrace = new ArrayDeque<ACTIONS>(goalTrace);
 							bestValue = value;
 							bestTraceLength = succ.depth + traceOffset;
-						} else if (value == bestValue
-								&& (succ.depth + traceOffset) < bestTraceLength) {
+						} else if (value == bestValue && (succ.depth + traceOffset) < bestTraceLength) {
 							goalTrace = stringToTrace(succ.trace);
 							Agent.goalTrace = new ArrayDeque<ACTIONS>(goalTrace);
 							bestTraceLength = succ.depth + traceOffset;
 						}
 					}
 				} /*
-				 * no GoalState found, check if score is higher or path is
-				 * shorter with identical score
-				 */
+					 * no GoalState found, check if score is higher or path is shorter with
+					 * identical score
+					 */
 				else {
 					double value = s.getGameScore();
 					if (value > bestValue) {
-						System.out.println("Best Value: " + value
-								+ "  Length: " + (succ.depth + traceOffset));
+						System.out.println("Best Value: " + value + "  Length: " + (succ.depth + traceOffset));
 						bestNodeTrace = stringToTrace(succ.trace);
 						bestValue = value;
 						bestTraceLength = succ.depth + traceOffset;
 						noScoreChange = false;
-					} else if (value == bestValue
-							&& (succ.depth + traceOffset) < bestTraceLength) {
-						System.out.println("Best Value: " + value
-								+ "  Length: " + (succ.depth + traceOffset)
+					} else if (value == bestValue && (succ.depth + traceOffset) < bestTraceLength) {
+						System.out.println("Best Value: " + value + "  Length: " + (succ.depth + traceOffset)
 								+ " Shorter Solution");
 						bestNodeTrace = stringToTrace(succ.trace);
 						bestTraceLength = succ.depth + traceOffset;
@@ -276,8 +267,8 @@ public final class BFSPlayer {
 	}
 
 	/**
-	 * Evaluation function f for BFS, determines the value of a BFSNode. Takes
-	 * score and path cost into consideration.
+	 * Evaluation function f for BFS, determines the value of a BFSNode. Takes score
+	 * and path cost into consideration.
 	 * 
 	 * @param n
 	 * @return a basic estimate of the value of a_gameState
@@ -309,8 +300,7 @@ public final class BFSPlayer {
 	}
 
 	public ArrayDeque<ACTIONS> getIntermediateResult() {
-		return (bestNodeTrace == null) ? new ArrayDeque<ACTIONS>()
-				: bestNodeTrace;
+		return (bestNodeTrace == null) ? new ArrayDeque<ACTIONS>() : bestNodeTrace;
 	}
 
 	public void reset() {
@@ -322,8 +312,7 @@ public final class BFSPlayer {
 		open = new PriorityQueue<BFSNode>(1000, bfsCmp);
 		openHash = new HashSet<Integer>();
 		closed = new HashSet<Integer>();
-		traceOffset = (bestNodeTrace == null) ? 0
-				: (traceOffset + bestNodeTrace.size());
+		traceOffset = (bestNodeTrace == null) ? 0 : (traceOffset + bestNodeTrace.size());
 		bestNodeTrace = new ArrayDeque<ACTIONS>();
 		bestTraceLength = 0;
 
@@ -351,15 +340,12 @@ public final class BFSPlayer {
 	private Integer hash(StateObservation s) {
 		StringBuilder sb = new StringBuilder(2048);
 
-		sb.append(s.getAvatarPosition().x).append("|")
-				.append(s.getAvatarPosition().y).append("|");
+		sb.append(s.getAvatarPosition().x).append("|").append(s.getAvatarPosition().y).append("|");
 
 		ArrayList<Observation>[] movables = s.getMovablePositions();
 		if (movables != null) {
 			for (ArrayList<Observation> a : movables) {
-				if (!a.isEmpty()
-						&& !Agent.ignoredSprites.contains(new Integer(
-								a.get(0).itype))) {
+				if (!a.isEmpty() && !Agent.ignoredSprites.contains(new Integer(a.get(0).itype))) {
 					for (Observation o : a) {
 						sb.append(o.position).append(o.itype);
 					}
@@ -368,18 +354,15 @@ public final class BFSPlayer {
 		}
 
 		/*
-		 * TODO: More intelligent way to only hash immovables that make sense.
-		 * The surrounding area is also counted as immovables, so the basic
-		 * check size<25 in GameTypeChecker should remove all those cases ( but
-		 * might result in a game where sth. with size>=25 should have been
-		 * hashed.
+		 * TODO: More intelligent way to only hash immovables that make sense. The
+		 * surrounding area is also counted as immovables, so the basic check size<25 in
+		 * GameTypeChecker should remove all those cases ( but might result in a game
+		 * where sth. with size>=25 should have been hashed.
 		 */
 		ArrayList<Observation>[] immovables = s.getImmovablePositions();
 		if (immovables != null) {
 			for (ArrayList<Observation> a : immovables) {
-				if (!a.isEmpty()
-						&& !Agent.ignoredSprites.contains(new Integer(
-								a.get(0).itype))) {
+				if (!a.isEmpty() && !Agent.ignoredSprites.contains(new Integer(a.get(0).itype))) {
 					for (Observation o : a) {
 						sb.append(o.position).append(o.itype);
 					}
@@ -408,8 +391,7 @@ public final class BFSPlayer {
 
 	private static long getGarbageCollectionTime() {
 		long collectionTime = 0;
-		for (GarbageCollectorMXBean garbageCollectorMXBean : ManagementFactory
-				.getGarbageCollectorMXBeans()) {
+		for (GarbageCollectorMXBean garbageCollectorMXBean : ManagementFactory.getGarbageCollectorMXBeans()) {
 			collectionTime += garbageCollectorMXBean.getCollectionTime();
 		}
 		return collectionTime;
@@ -432,14 +414,12 @@ public final class BFSPlayer {
 
 	private void debugGCChecking() {
 		System.out.println("Total GC Time Spent: " + totalGCTimePassed);
-		System.out.println("Procentual GC Time Spent: "
-				+ (totalGCTimePassed / totalTimePassed) * 100 + "%");
+		System.out.println("Procentual GC Time Spent: " + (totalGCTimePassed / totalTimePassed) * 100 + "%");
 	}
 
 	private void adjustStepCost() {
 
-		if (Agent.bfsIterations > 100 && bestTraceLength == 1 && bestValue == 0
-				&& stepCost > 0) {
+		if (Agent.bfsIterations > 100 && bestTraceLength == 1 && bestValue == 0 && stepCost > 0) {
 			System.out.println("Trying stepCost of 0");
 			stepCost = 0d;
 			BFSNodeComparator bfsCmp = new BFSNodeComparator();
@@ -453,8 +433,7 @@ public final class BFSPlayer {
 		if (noScoreChangeCounter > 80 && bestValue > 0) {
 			// adjust bestValue
 			if (bestTraceLength >= traceOffset) {
-				stepCost = stepCost
-						+ (0.05 * ((10 * bestValue - (stepCost * bestTraceLength)) / bestTraceLength));
+				stepCost = stepCost + (0.05 * ((10 * bestValue - (stepCost * bestTraceLength)) / bestTraceLength));
 				noScoreChangeCounter = 0;
 				BFSNodeComparator bfsCmp = new BFSNodeComparator();
 				PriorityQueue<BFSNode> save = open;
@@ -495,10 +474,8 @@ public final class BFSPlayer {
 			save.clear();
 		} else if (noScoreChangeCounter == 250) {
 			noScoreChangeCounter = 0;
-			stepCost = (bestNodeTrace.size() > 1) ? ((bestValue * 10) / (bestTraceLength * 1.1))
-					: 0;
-			System.out
-					.println("Complete reset because of 150 iterations without change");
+			stepCost = (bestNodeTrace.size() > 1) ? ((bestValue * 10) / (bestTraceLength * 1.1)) : 0;
+			System.out.println("Complete reset because of 150 iterations without change");
 			BFSNodeComparator bfsCmp = new BFSNodeComparator();
 			int pqSize = (open.size() > 0) ? open.size() : 1000;
 			open = new PriorityQueue<BFSNode>(pqSize, bfsCmp);
@@ -508,8 +485,7 @@ public final class BFSPlayer {
 	}
 
 	private double getClosestMovable(StateObservation s) {
-		ArrayList<Observation>[] a = s.getMovablePositions(s
-				.getAvatarPosition());
+		ArrayList<Observation>[] a = s.getMovablePositions(s.getAvatarPosition());
 		double closestMovable = Double.MAX_VALUE;
 		if (a != null) {
 			for (int i = 0; i < a.length; i++) {

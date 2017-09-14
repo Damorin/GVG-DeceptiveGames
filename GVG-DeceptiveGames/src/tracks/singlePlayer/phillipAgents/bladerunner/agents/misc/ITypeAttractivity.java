@@ -1,14 +1,14 @@
-package controllers.bladerunner.agents.misc;
+package tracks.singlePlayer.phillipAgents.bladerunner.agents.misc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import controllers.bladerunner.bladeRunner.Agent;
-import ontology.Types;
 import core.game.Event;
 import core.game.Observation;
 import core.game.StateObservation;
+import ontology.Types;
+import tracks.singlePlayer.phillipAgents.bladerunner.bladeRunner.Agent;
 
 public class ITypeAttractivity extends HashMap<Integer, Double> {
 
@@ -33,7 +33,7 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 	 * @param StateObs
 	 *            a StateObservation
 	 */
-	public ITypeAttractivity(StateObservation StateObs, int numActions ) {
+	public ITypeAttractivity(StateObservation StateObs, int numActions) {
 		super();
 
 		ArrayList<Observation>[][] grid = StateObs.getObservationGrid();
@@ -43,10 +43,9 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 		spriteCategoryAttractivityValue.put(Types.TYPE_AVATAR, -1.0);
 		spriteCategoryAttractivityValue.put(Types.TYPE_RESOURCE, 0.4);
 		spriteCategoryAttractivityValue.put(Types.TYPE_PORTAL, 0.1);
-		if(numActions == 4 || numActions == 2){
+		if (numActions == 4 || numActions == 2) {
 			spriteCategoryAttractivityValue.put(Types.TYPE_NPC, -0.2);
-		}
-		else{
+		} else {
 			spriteCategoryAttractivityValue.put(Types.TYPE_NPC, 0.2);
 		}
 		spriteCategoryAttractivityValue.put(Types.TYPE_STATIC, 0.05);
@@ -57,8 +56,7 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 		for (ArrayList<Observation>[] Obsarray : grid) {
 			for (ArrayList<Observation> Obslist : Obsarray) {
 				for (Observation Obs : Obslist) {
-					this.put(Obs.itype,
-							this.spriteCategoryAttractivityValue.get(Obs.category));
+					this.put(Obs.itype, this.spriteCategoryAttractivityValue.get(Obs.category));
 				}
 			}
 		}
@@ -76,8 +74,7 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 	 *            Resource=1, Portal=2, NPC=3, Static=4, FromAvatar=5, Movable=6
 	 * 
 	 */
-	public ITypeAttractivity(StateObservation StateObs,
-			HashMap<Integer, Double> SpriteCategoryPriors) {
+	public ITypeAttractivity(StateObservation StateObs, HashMap<Integer, Double> SpriteCategoryPriors) {
 		super();
 
 		ArrayList<Observation>[][] grid = StateObs.getObservationGrid();
@@ -89,8 +86,7 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 		for (ArrayList<Observation>[] Obsarray : grid) {
 			for (ArrayList<Observation> Obslist : Obsarray) {
 				for (Observation Obs : Obslist) {
-					this.put(Obs.itype,
-							this.spriteCategoryAttractivityValue.get(Obs.category));
+					this.put(Obs.itype, this.spriteCategoryAttractivityValue.get(Obs.category));
 				}
 			}
 		}
@@ -108,35 +104,26 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 	 *            Resource=1, Portal=2, NPC=3, Static=4, FromAvatar=5, Movable=6
 	 * 
 	 */
-	public ITypeAttractivity(StateObservation StateObs,
-			Double[] SpriteCategoryPriors) {
+	public ITypeAttractivity(StateObservation StateObs, Double[] SpriteCategoryPriors) {
 		super();
 
 		ArrayList<Observation>[][] grid = StateObs.getObservationGrid();
 
 		// Set prior Attraction values of categories
 		spriteCategoryAttractivityValue = new HashMap<Integer, Double>();
-		spriteCategoryAttractivityValue.put(Types.TYPE_AVATAR,
-				SpriteCategoryPriors[Types.TYPE_AVATAR]);
-		spriteCategoryAttractivityValue.put(Types.TYPE_RESOURCE,
-				SpriteCategoryPriors[Types.TYPE_RESOURCE]);
-		spriteCategoryAttractivityValue.put(Types.TYPE_PORTAL,
-				SpriteCategoryPriors[Types.TYPE_PORTAL]);
-		spriteCategoryAttractivityValue.put(Types.TYPE_NPC,
-				SpriteCategoryPriors[Types.TYPE_NPC]);
-		spriteCategoryAttractivityValue.put(Types.TYPE_STATIC,
-				SpriteCategoryPriors[Types.TYPE_STATIC]);
-		spriteCategoryAttractivityValue.put(Types.TYPE_FROMAVATAR,
-				SpriteCategoryPriors[Types.TYPE_FROMAVATAR]);
-		spriteCategoryAttractivityValue.put(Types.TYPE_MOVABLE,
-				SpriteCategoryPriors[Types.TYPE_MOVABLE]);
+		spriteCategoryAttractivityValue.put(Types.TYPE_AVATAR, SpriteCategoryPriors[Types.TYPE_AVATAR]);
+		spriteCategoryAttractivityValue.put(Types.TYPE_RESOURCE, SpriteCategoryPriors[Types.TYPE_RESOURCE]);
+		spriteCategoryAttractivityValue.put(Types.TYPE_PORTAL, SpriteCategoryPriors[Types.TYPE_PORTAL]);
+		spriteCategoryAttractivityValue.put(Types.TYPE_NPC, SpriteCategoryPriors[Types.TYPE_NPC]);
+		spriteCategoryAttractivityValue.put(Types.TYPE_STATIC, SpriteCategoryPriors[Types.TYPE_STATIC]);
+		spriteCategoryAttractivityValue.put(Types.TYPE_FROMAVATAR, SpriteCategoryPriors[Types.TYPE_FROMAVATAR]);
+		spriteCategoryAttractivityValue.put(Types.TYPE_MOVABLE, SpriteCategoryPriors[Types.TYPE_MOVABLE]);
 
 		// go through observation grid and put all iTypes into the map
 		for (ArrayList<Observation>[] Obsarray : grid) {
 			for (ArrayList<Observation> Obslist : Obsarray) {
 				for (Observation Obs : Obslist) {
-					this.put(Obs.itype,
-							this.spriteCategoryAttractivityValue.get(Obs.category));
+					this.put(Obs.itype, this.spriteCategoryAttractivityValue.get(Obs.category));
 				}
 			}
 		}
@@ -144,23 +131,22 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 	}
 
 	// METHODS
-	public Double putIfAbsent(Observation obs){
-		if(!this.containsKey(obs.itype)){
+	public Double putIfAbsent(Observation obs) {
+		if (!this.containsKey(obs.itype)) {
 			this.put(obs.itype, this.spriteCategoryAttractivityValue.get(obs.category));
 			if (Agent.isVerbose) {
-				System.out.println("ITypeAttractivityMap::added iType " + obs.itype
-						+ " with value "
+				System.out.println("ITypeAttractivityMap::added iType " + obs.itype + " with value "
 						+ this.spriteCategoryAttractivityValue.get(obs.category));
 			}
 		}
-		return this.get(obs.itype);		
+		return this.get(obs.itype);
 	}
 
 	/**
-	 * updates the itypesAttractionValues based on a state Observation TODO:
-	 * Maybe it would be good to make a difference between Avatar and FromAvatar
-	 * Events. TODO: Maybe there is a better learning rule TODO: The updateVals
-	 * have to be adjusted
+	 * updates the itypesAttractionValues based on a state Observation TODO: Maybe
+	 * it would be good to make a difference between Avatar and FromAvatar Events.
+	 * TODO: Maybe there is a better learning rule TODO: The updateVals have to be
+	 * adjusted
 	 * 
 	 * @param StateObservation
 	 *            State Observation
@@ -191,8 +177,7 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 			updateVal = 1;
 		}
 
-		Iterator<Event> eventIterator = stateObs.getEventsHistory()
-				.descendingIterator();
+		Iterator<Event> eventIterator = stateObs.getEventsHistory().descendingIterator();
 		while (eventIterator.hasNext()) {
 			Event currEvent = eventIterator.next();
 
@@ -200,8 +185,7 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 			 * System.out.print("Game Step:" + currEvent.gameStep + " ");
 			 * System.out.print(currEvent.passiveTypeId + " ");
 			 * System.out.print(currEvent.passiveSpriteId + " ");
-			 * System.out.print(currEvent.position + " ");
-			 * System.out.println(" ");
+			 * System.out.print(currEvent.position + " "); System.out.println(" ");
 			 */
 
 			// All Events that happened in the last game tick
@@ -216,9 +200,8 @@ public class ITypeAttractivity extends HashMap<Integer, Double> {
 			}
 
 			if (currEvent.passiveTypeId != 0) { // exclude walls=0
-				double newVal = this.get(currEvent.passiveTypeId) + updateVal
-						* learningrate;
-				if (newVal < -1 && newVal!=-2) {
+				double newVal = this.get(currEvent.passiveTypeId) + updateVal * learningrate;
+				if (newVal < -1 && newVal != -2) {
 					newVal = -1;
 				}
 				if (newVal > 1) {

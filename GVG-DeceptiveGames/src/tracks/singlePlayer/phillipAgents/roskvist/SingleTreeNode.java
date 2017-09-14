@@ -1,4 +1,4 @@
-package controllers.roskvist;
+package tracks.singlePlayer.phillipAgents.roskvist;
 
 import core.game.StateObservation;
 import ontology.Types;
@@ -35,28 +35,26 @@ public class SingleTreeNode {
 	public static double mixMaxQ = 0.1d;
 	// [1 ...*]
 	public static int macroRepeat = 3;
-	
 
 	public static LinkedList<Vector2d> lastPlacesVisited;
-	public Vector2d nodePosition; 
+	public Vector2d nodePosition;
 
-	
-	//The parent action that lead to this node
+	// The parent action that lead to this node
 	private int parentAction;
-	
-	//The action picked in the last mcts run
-	public static int lastRunAction;
-	
-	public static int standingStillCounter = 0;
-	
-	
-	//The root of the tree
-	private static SingleTreeNode root;
-	
-	//this could be used to implement a better reward nomalization by redoing all scores each time the bounds have changed
-	//public static ArrayList<SingleTreeNode> nodeList;
 
-	//The max manhatten distance in the game, used for nomalizing distance.
+	// The action picked in the last mcts run
+	public static int lastRunAction;
+
+	public static int standingStillCounter = 0;
+
+	// The root of the tree
+	private static SingleTreeNode root;
+
+	// this could be used to implement a better reward nomalization by redoing all
+	// scores each time the bounds have changed
+	// public static ArrayList<SingleTreeNode> nodeList;
+
+	// The max manhatten distance in the game, used for nomalizing distance.
 	private static int manhattenMaxDistance;
 
 	public SingleTreeNode(Random rnd, StateObservation state) {
@@ -65,22 +63,19 @@ public class SingleTreeNode {
 		setupMaxDistance(state);
 	}
 
-	public SingleTreeNode(StateObservation state, SingleTreeNode parent,
-			Random rnd, int parentAction) {
+	public SingleTreeNode(StateObservation state, SingleTreeNode parent, Random rnd, int parentAction) {
 		this.state = state;
 		this.parent = parent;
 		this.m_rnd = rnd;
 		this.parentAction = parentAction;
 		nodePosition = state == null ? null : state.getAvatarPosition();
-		children = new SingleTreeNode[controllers.roskvist.Agent.NUM_ACTIONS];
+		children = new SingleTreeNode[Agent.NUM_ACTIONS];
 		totValue = 0.0;
 		if (parent != null)
 			m_depth = parent.m_depth + 1;
 		else
 			m_depth = 0;
 	}
-	
-
 
 	public void mctsSearch(ElapsedCpuTimer elapsedTimer) {
 
@@ -95,16 +90,15 @@ public class SingleTreeNode {
 		int remainingLimit = 5;
 		while (remaining > 2 * avgTimeTaken && remaining > remainingLimit) {
 			ElapsedCpuTimer elapsedTimerIteration = new ElapsedCpuTimer();
-			//SingleTreeNode selected = treePolicy();
+			// SingleTreeNode selected = treePolicy();
 			SingleTreeNode selected = treePolicyReversePenalty();
-			//SingleTreeNode selected = treePolicyPartialExpansion();
-			
-			
-			//double delta = selected.rollOut();
-			
-			//A more simple reward strategy
+			// SingleTreeNode selected = treePolicyPartialExpansion();
+
+			// double delta = selected.rollOut();
+
+			// A more simple reward strategy
 			double delta = selected.rollOutNewValueTest();
-			
+
 			backUp(selected, delta);
 
 			numIters++;
@@ -115,7 +109,7 @@ public class SingleTreeNode {
 			// System.out.println(elapsedTimerIteration.elapsedMillis() +
 			// " --> " + acumTimeTaken + " (" + remaining + ")");
 		}
-		 //System.out.println("-- " + numIters + " -- ( " + avgTimeTaken + ")");
+		// System.out.println("-- " + numIters + " -- ( " + avgTimeTaken + ")");
 		// System.out.println("MIN: " + lastBounds[0] + " MAX:" + lastBounds[1]);
 	}
 
@@ -123,10 +117,10 @@ public class SingleTreeNode {
 
 		SingleTreeNode cur = this;
 
-		while (!cur.state.isGameOver() && cur.m_depth < controllers.roskvist.Agent.ROLLOUT_DEPTH) {
+		while (!cur.state.isGameOver() && cur.m_depth < Agent.ROLLOUT_DEPTH) {
 			if (cur.notFullyExpanded()) {
-				//return cur.macroActionsExpand();
-				 return cur.expand();
+				// return cur.macroActionsExpand();
+				return cur.expand();
 
 			} else {
 				// SingleTreeNode next = cur.partialExpansionUCT();
@@ -139,15 +133,15 @@ public class SingleTreeNode {
 
 		return cur;
 	}
-	
-	//This version of the expansion has a penalty for doing a reverse move
+
+	// This version of the expansion has a penalty for doing a reverse move
 	public SingleTreeNode treePolicyReversePenalty() {
 
 		SingleTreeNode cur = this;
 
 		while (!cur.state.isGameOver() && cur.m_depth < Agent.TREE_DEPTH) {
-			if (cur.notFullyExpanded()) {				
-				 return cur.expand();
+			if (cur.notFullyExpanded()) {
+				return cur.expand();
 
 			} else {
 
@@ -160,35 +154,25 @@ public class SingleTreeNode {
 		return cur;
 	}
 
-	/*public SingleTreeNode treePolicyPartialExpansion() {
-		SingleTreeNode cur = this;
-		while (!cur.state.isGameOver() && cur.m_depth < roskvist.Agent.ROLLOUT_DEPTH) {
-			if (cur.notFullyExpanded()) {
-
-				SingleTreeNode next = cur.partialExpansionUCT();
-				
-				//expansion
-				if(next == null) {
-					return cur.expand();
-				}
-				
-				cur = next;
-
-			} else {
-				SingleTreeNode next = cur.uct();
-				// SingleTreeNode next = cur.mixMaxUCT();
-				// SingleTreeNode next = cur.uct();
-				// SingleTreeNode next = cur.egreedy();
-				cur = next;
-			}
-		}
-		
-		return cur;
-
-	}*/
-	
-	
-	
+	/*
+	 * public SingleTreeNode treePolicyPartialExpansion() { SingleTreeNode cur =
+	 * this; while (!cur.state.isGameOver() && cur.m_depth <
+	 * roskvist.Agent.ROLLOUT_DEPTH) { if (cur.notFullyExpanded()) {
+	 * 
+	 * SingleTreeNode next = cur.partialExpansionUCT();
+	 * 
+	 * //expansion if(next == null) { return cur.expand(); }
+	 * 
+	 * cur = next;
+	 * 
+	 * } else { SingleTreeNode next = cur.uct(); // SingleTreeNode next =
+	 * cur.mixMaxUCT(); // SingleTreeNode next = cur.uct(); // SingleTreeNode next =
+	 * cur.egreedy(); cur = next; } }
+	 * 
+	 * return cur;
+	 * 
+	 * }
+	 */
 
 	/*
 	 * From the Mario paper section 5.2
@@ -210,7 +194,7 @@ public class SingleTreeNode {
 		SingleTreeNode tn = this;
 
 		for (int idx = 0; idx < macroRepeat; idx++) {
-			nextState.advance(controllers.roskvist.Agent.actions[bestAction]);
+			nextState.advance(Agent.actions[bestAction]);
 			tn = new SingleTreeNode(nextState, tn, tn.m_rnd, bestAction);
 			tn.parent.children[bestAction] = tn;
 			nextState = nextState.copy();
@@ -233,7 +217,7 @@ public class SingleTreeNode {
 		}
 
 		StateObservation nextState = state.copy();
-		nextState.advance(controllers.roskvist.Agent.actions[bestAction]);
+		nextState.advance(Agent.actions[bestAction]);
 
 		SingleTreeNode tn = new SingleTreeNode(nextState, this, this.m_rnd, bestAction);
 		children[bestAction] = tn;
@@ -250,9 +234,7 @@ public class SingleTreeNode {
 			double childValue = hvVal / (child.nVisits + this.epsilon);
 
 			double uctValue = childValue
-					+ controllers.roskvist.Agent.K
-					* Math.sqrt(Math.log(this.nVisits + 1)
-							/ (child.nVisits + this.epsilon))
+					+ Agent.K * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + this.epsilon))
 					+ this.m_rnd.nextDouble() * this.epsilon;
 
 			// small sampleRandom numbers: break ties in unexpanded nodes
@@ -263,87 +245,76 @@ public class SingleTreeNode {
 		}
 
 		if (selected == null) {
-			throw new RuntimeException("Warning! returning null: " + bestValue
-					+ " : " + this.children.length);
+			throw new RuntimeException("Warning! returning null: " + bestValue + " : " + this.children.length);
 		}
 
 		return selected;
 	}
-	
+
 	private void setupMaxDistance(StateObservation state) {
 		Dimension dim = state.getWorldDimension();
 
-		
 		manhattenMaxDistance = dim.height + dim.width;
-	
-		
+
 	}
-	
+
 	public SingleTreeNode uctReversePenalty() {
 
 		SingleTreeNode selected = null;
 		double bestValue = -Double.MAX_VALUE;
-		
+
 		Vector2d lastPlaceVisited = lastPlacesVisited.peekLast();
-		
-		
 
 		Vector2d pos;
 		Vector2d rootPos = root.state.getAvatarPosition();
 		double dist;
-		
 
-		
-		
 		for (SingleTreeNode child : this.children) {
 			double hvVal = child.totValue;
 			double childValue = hvVal / (child.nVisits + this.epsilon);
 			// The MIXMAX part
-			double mixMaxValue = mixMaxQ * hvVal
-					+ (1 - mixMaxQ) * childValue;
-			
-			//We assign a penalty to the child if the game position has been visited recently
-			//The penalty is dropped if we repeat the last action made though.
-			//boolean penalty = (lastPlacesVisited.contains(child.nodePosition) && child.parentAction != lastRunAction) ? true : false;
-			//boolean penalty = false;
+			double mixMaxValue = mixMaxQ * hvVal + (1 - mixMaxQ) * childValue;
+
+			// We assign a penalty to the child if the game position has been visited
+			// recently
+			// The penalty is dropped if we repeat the last action made though.
+			// boolean penalty = (lastPlacesVisited.contains(child.nodePosition) &&
+			// child.parentAction != lastRunAction) ? true : false;
+			// boolean penalty = false;
 			pos = child.nodePosition;
 			double penalty = lastPlacesVisited.contains(pos) ? 0.9 : 1;
-			
-			if(child.nodePosition.equals(lastPlaceVisited) && child.parentAction == lastRunAction) {
+
+			if (child.nodePosition.equals(lastPlaceVisited) && child.parentAction == lastRunAction) {
 				penalty = 1;
-				//System.out.println("penalty removed");
+				// System.out.println("penalty removed");
 			}
-			
-			//System.out.println("Counter: " + standingStillCounter);
-			if(standingStillCounter > 2) {
-				
-				//penalty = 1;
+
+			// System.out.println("Counter: " + standingStillCounter);
+			if (standingStillCounter > 2) {
+
+				// penalty = 1;
 			}
-			
-			//we also add a normalized distance to encourage the controller to move around the map
-			
-			dist = Math.abs(pos.x-rootPos.x + pos.y-rootPos.y);
+
+			// we also add a normalized distance to encourage the controller to move around
+			// the map
+
+			dist = Math.abs(pos.x - rootPos.x + pos.y - rootPos.y);
 			dist = Utils.normalise(dist, 0, manhattenMaxDistance);
 
 			double uctValue = mixMaxValue
-					+ Agent.K
-					* Math.sqrt(Math.log(this.nVisits + 1)
-					/ (child.nVisits + this.epsilon))
+					+ Agent.K * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + this.epsilon))
 					+ this.m_rnd.nextDouble() * this.epsilon;
 			/*
-			double uctValue = childValue
-					+ Agent.K
-					* Math.sqrt(Math.log(this.nVisits + 1)
-							/ (child.nVisits + this.epsilon))
-					+ this.m_rnd.nextDouble() * this.epsilon;
-*/
-			//We add the normalized distance to the uct value
-			//uctValue+=dist * 0.1;
-			
-			//System.out.println(uctValue);
-			//apply the penalty
-		uctValue *= penalty;	
-			
+			 * double uctValue = childValue + Agent.K Math.sqrt(Math.log(this.nVisits + 1) /
+			 * (child.nVisits + this.epsilon)) + this.m_rnd.nextDouble() * this.epsilon;
+			 */
+			// We add the normalized distance to the uct value
+			// uctValue+=dist * 0.1;
+
+			// System.out.println(uctValue);
+			// apply the penalty
+			uctValue *= penalty;
+
 			// small sampleRandom numbers: break ties in unexpanded nodes
 			if (uctValue > bestValue) {
 				selected = child;
@@ -352,8 +323,7 @@ public class SingleTreeNode {
 		}
 
 		if (selected == null) {
-			throw new RuntimeException("Warning! returning null: " + bestValue
-					+ " : " + this.children.length);
+			throw new RuntimeException("Warning! returning null: " + bestValue + " : " + this.children.length);
 		}
 
 		return selected;
@@ -361,116 +331,83 @@ public class SingleTreeNode {
 
 	// Mixmax rewards
 	// Mario mcts paper, 5.1
-/*	public SingleTreeNode mixMaxUCT() {
-
-		SingleTreeNode selected = null;
-		double bestValue = -Double.MAX_VALUE;
-		for (SingleTreeNode child : this.children) {
-			double hvVal = child.totValue;
-			double childValue = hvVal / (child.nVisits + this.epsilon);
-
-			// The MIXMAX part
-			double mixMaxValue = SingleTreeNode.mixMaxQ * hvVal
-					+ (1 - SingleTreeNode.mixMaxQ) * childValue;
-
-			// Replaced the childvalue with the mixmax value
-			double uctValue = mixMaxValue
-					+ Agent.K
-					* Math.sqrt(Math.log(this.nVisits + 1)
-							/ (child.nVisits + this.epsilon))
-					+ this.m_rnd.nextDouble() * this.epsilon;
-
-			// small sampleRandom numbers: break ties in unexpanded nodes
-			if (uctValue > bestValue) {
-				selected = child;
-				bestValue = uctValue;
-			}
-		}
-
-		if (selected == null) {
-			throw new RuntimeException("Warning! returning null: " + bestValue
-					+ " : " + this.children.length);
-		}
-
-		return selected;
-	}
-	*/
+	/*
+	 * public SingleTreeNode mixMaxUCT() {
+	 * 
+	 * SingleTreeNode selected = null; double bestValue = -Double.MAX_VALUE; for
+	 * (SingleTreeNode child : this.children) { double hvVal = child.totValue;
+	 * double childValue = hvVal / (child.nVisits + this.epsilon);
+	 * 
+	 * // The MIXMAX part double mixMaxValue = SingleTreeNode.mixMaxQ * hvVal + (1 -
+	 * SingleTreeNode.mixMaxQ) * childValue;
+	 * 
+	 * // Replaced the childvalue with the mixmax value double uctValue =
+	 * mixMaxValue + Agent.K Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits +
+	 * this.epsilon)) + this.m_rnd.nextDouble() * this.epsilon;
+	 * 
+	 * // small sampleRandom numbers: break ties in unexpanded nodes if (uctValue >
+	 * bestValue) { selected = child; bestValue = uctValue; } }
+	 * 
+	 * if (selected == null) { throw new
+	 * RuntimeException("Warning! returning null: " + bestValue + " : " +
+	 * this.children.length); }
+	 * 
+	 * return selected; }
+	 */
 	// Partial expansion
 	// Mario mcts paper, 5.3
-	//Compares  expansion uct value to uct value of expanded nodes.
-	//returns null if expansion is chosen, otherwise return best node based on uct
-	/*public SingleTreeNode partialExpansionUCT() {
-		
-		SingleTreeNode selected = null;
-		double bestValue = -Double.MAX_VALUE;
-		double worstVaule = Double.MAX_VALUE;
-		boolean childLess = true;
-		for (SingleTreeNode child : this.children) {
-			if(child == null) {
-				continue;
-			}
-			childLess = false;
-			
-			double hvVal = child.totValue;
-			double childValue = hvVal / (child.nVisits + this.epsilon);
-
-			double uctValue = childValue
-					+ Agent.K
-					* Math.sqrt(Math.log(this.nVisits + 1)
-							/ (child.nVisits + this.epsilon))
-					+ this.m_rnd.nextDouble() * this.epsilon;
-
-			// small sampleRandom numbers: break ties in unexpanded nodes
-			if (uctValue > bestValue) {
-				selected = child;
-				bestValue = uctValue;
-			}
-			
-			if(uctValue < worstVaule) {
-				worstVaule = uctValue;
-			}
-		}
-		
-		
-		double expansionUCTValue = partialExpansionUCTValue();
-		
-		
-		//expansion vaule is higher than the worst child, and we should therefore expand.
-		if(expansionUCTValue > worstVaule || childLess) {
-			return null;
-		}
-		
-
-		if (selected == null) {
-			throw new RuntimeException("Warning! returning null: " + bestValue
-					+ " : " + this.children.length);
-		}
-
-		return selected;
-	}
-	
-*/
+	// Compares expansion uct value to uct value of expanded nodes.
+	// returns null if expansion is chosen, otherwise return best node based on uct
+	/*
+	 * public SingleTreeNode partialExpansionUCT() {
+	 * 
+	 * SingleTreeNode selected = null; double bestValue = -Double.MAX_VALUE; double
+	 * worstVaule = Double.MAX_VALUE; boolean childLess = true; for (SingleTreeNode
+	 * child : this.children) { if(child == null) { continue; } childLess = false;
+	 * 
+	 * double hvVal = child.totValue; double childValue = hvVal / (child.nVisits +
+	 * this.epsilon);
+	 * 
+	 * double uctValue = childValue + Agent.K Math.sqrt(Math.log(this.nVisits + 1) /
+	 * (child.nVisits + this.epsilon)) + this.m_rnd.nextDouble() * this.epsilon;
+	 * 
+	 * // small sampleRandom numbers: break ties in unexpanded nodes if (uctValue >
+	 * bestValue) { selected = child; bestValue = uctValue; }
+	 * 
+	 * if(uctValue < worstVaule) { worstVaule = uctValue; } }
+	 * 
+	 * 
+	 * double expansionUCTValue = partialExpansionUCTValue();
+	 * 
+	 * 
+	 * //expansion vaule is higher than the worst child, and we should therefore
+	 * expand. if(expansionUCTValue > worstVaule || childLess) { return null; }
+	 * 
+	 * 
+	 * if (selected == null) { throw new
+	 * RuntimeException("Warning! returning null: " + bestValue + " : " +
+	 * this.children.length); }
+	 * 
+	 * return selected; }
+	 * 
+	 */
 	// Partial expansion
 	// Mario mcts paper, 5.3
 	public double partialExpansionUCTValue() {
 
-	
-			double k = 0.5;
-			
-			int childCounter = 0;
-			
-			for(SingleTreeNode s : this.children) {
-				if(s != null) {
-					childCounter++;
-				}
+		double k = 0.5;
+
+		int childCounter = 0;
+
+		for (SingleTreeNode s : this.children) {
+			if (s != null) {
+				childCounter++;
 			}
+		}
 
-			//modified from the mcts paper to resemble the uct formula already used in the sample controller 
-			double uctValue = k + Agent.K *  Math.sqrt(Math.log(this.nVisits + 1)
-							/ (1+childCounter));
-					
-
-
+		// modified from the mcts paper to resemble the uct formula already used in the
+		// sample controller
+		double uctValue = k + Agent.K * Math.sqrt(Math.log(this.nVisits + 1) / (1 + childCounter));
 
 		return uctValue;
 	}
@@ -500,8 +437,7 @@ public class SingleTreeNode {
 		}
 
 		if (selected == null) {
-			throw new RuntimeException("Warning! returning null: "
-					+ this.children.length);
+			throw new RuntimeException("Warning! returning null: " + this.children.length);
 		}
 
 		return selected;
@@ -520,19 +456,19 @@ public class SingleTreeNode {
 
 		double delta = value(rollerState);
 
-		if (delta < curBounds[0]){
+		if (delta < curBounds[0]) {
 			curBounds[0] = delta;
 		}
 		if (delta > curBounds[1])
 			curBounds[1] = delta;
 
 		double normDelta = Utils.normalise(delta, lastBounds[0], lastBounds[1]);
-		
-		//System.out.println(normDelta);
+
+		// System.out.println(normDelta);
 
 		return normDelta;
 	}
-	
+
 	public double rollOutConstantDepth() {
 		StateObservation rollerState = state.copy();
 		int thisDepth = 0;
@@ -555,7 +491,7 @@ public class SingleTreeNode {
 
 		return normDelta;
 	}
-	
+
 	public double rollOutNewValueTest() {
 		StateObservation rollerState = state.copy();
 		int thisDepth = this.m_depth;
@@ -569,9 +505,7 @@ public class SingleTreeNode {
 
 		double delta = valueModified(rollerState);
 
-	
-		
-		//System.out.println(normDelta);
+		// System.out.println(normDelta);
 
 		return delta;
 	}
@@ -584,49 +518,48 @@ public class SingleTreeNode {
 
 		if (gameOver && win == Types.WINNER.PLAYER_LOSES)
 			return HUGE_NEGATIVE;
-			//return -1;
+		// return -1;
 
 		if (gameOver && win == Types.WINNER.PLAYER_WINS)
 			return HUGE_POSITIVE;
 
 		return rawScore;
 	}
-	
+
 	public double valueModified(StateObservation a_gameState) {
 
 		boolean gameOver = a_gameState.isGameOver();
 		Types.WINNER win = a_gameState.getGameWinner();
 		double rawScore = a_gameState.getGameScore();
 
-		
-	
 		if (gameOver && win == Types.WINNER.PLAYER_LOSES)
 			return 0;
-			//return -1;
+		// return -1;
 
 		if (gameOver && win == Types.WINNER.PLAYER_WINS)
 			return 1;
 
 		double deltaScore = rawScore - root.state.getGameScore();
-		
-		//If no change in score, we can instead award the controller for moving around the map
-		Vector2d pos  = a_gameState.getAvatarPosition();
+
+		// If no change in score, we can instead award the controller for moving around
+		// the map
+		Vector2d pos = a_gameState.getAvatarPosition();
 		Vector2d rootPos = root.state.getAvatarPosition();
-		double dist = Math.abs(pos.x-rootPos.x + pos.y-rootPos.y);
-		
+		double dist = Math.abs(pos.x - rootPos.x + pos.y - rootPos.y);
+
 		dist = Utils.normalise(dist, 0, manhattenMaxDistance);
-		
-		if(deltaScore > 0) {
+
+		if (deltaScore > 0) {
 			return 1 - Math.pow(0.25, deltaScore);
 		}
-		if(deltaScore == 0) {
-			//(1-t)*v0 + t*v1;
-			//return (1-dist) * 0.26d + dist * 0.50d;
+		if (deltaScore == 0) {
+			// (1-t)*v0 + t*v1;
+			// return (1-dist) * 0.26d + dist * 0.50d;
 			return 0.5;
 		}
-		
+
 		return 0.25;
-		
+
 	}
 
 	public boolean finishRollout(StateObservation rollerState, int depth) {
@@ -638,17 +571,18 @@ public class SingleTreeNode {
 
 		return false;
 	}
-	
-//	//This depth is now seperated from the tree depth
-//	public boolean finishRolloutConstantDepth(StateObservation state, int depth) {
-//		if (depth >= Agent.ROLLOUT_DEPTH) // rollout end condition.
-//			return true;
-//
-//		if (rollerState.isGameOver()) // end of game
-//			return true;
-//
-//		return false;
-//	}
+
+	// //This depth is now seperated from the tree depth
+	// public boolean finishRolloutConstantDepth(StateObservation state, int depth)
+	// {
+	// if (depth >= Agent.ROLLOUT_DEPTH) // rollout end condition.
+	// return true;
+	//
+	// if (rollerState.isGameOver()) // end of game
+	// return true;
+	//
+	// return false;
+	// }
 
 	public void backUp(SingleTreeNode node, double result) {
 		SingleTreeNode n = node;
@@ -683,7 +617,7 @@ public class SingleTreeNode {
 		}
 
 		if (selected == -1) {
-			//System.out.println("Unexpected selection!");
+			// System.out.println("Unexpected selection!");
 			selected = 0;
 		} else if (allEqual) {
 			// If all are equal, we opt to choose for the one with the best Q.
@@ -691,8 +625,8 @@ public class SingleTreeNode {
 		}
 		return selected;
 	}
-	
-	//we give bonus reward for repeated actions
+
+	// we give bonus reward for repeated actions
 	public int mostVisitedActionWithRepeatReward(float reward, int lastAction) {
 		int selected = -1;
 		double bestValue = -Double.MAX_VALUE;
@@ -709,17 +643,18 @@ public class SingleTreeNode {
 				}
 
 				double tieBreaker = m_rnd.nextDouble() * epsilon;
-				
-				//we multiply the score by reward if it is a repeated action
-				double visitScore = (i == lastAction)? reward * children[i].nVisits + tieBreaker : children[i].nVisits + tieBreaker;
-				
+
+				// we multiply the score by reward if it is a repeated action
+				double visitScore = (i == lastAction) ? reward * children[i].nVisits + tieBreaker
+						: children[i].nVisits + tieBreaker;
+
 				if (visitScore > bestValue) {
 					bestValue = children[i].nVisits + tieBreaker;
 					selected = i;
 				}
 			}
 		}
-		
+
 		if (selected == -1) {
 			System.out.println("Unexpected selection!");
 			selected = 0;
@@ -737,8 +672,7 @@ public class SingleTreeNode {
 		for (int i = 0; i < children.length; i++) {
 
 			double tieBreaker = m_rnd.nextDouble() * epsilon;
-			if (children[i] != null
-					&& children[i].totValue + tieBreaker > bestValue) {
+			if (children[i] != null && children[i].totValue + tieBreaker > bestValue) {
 				bestValue = children[i].totValue + tieBreaker;
 				selected = i;
 			}

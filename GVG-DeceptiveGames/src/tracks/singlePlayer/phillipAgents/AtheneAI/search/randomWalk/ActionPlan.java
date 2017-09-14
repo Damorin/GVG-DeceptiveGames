@@ -1,4 +1,4 @@
-package controllers.AtheneAI.search.randomWalk;
+package tracks.singlePlayer.phillipAgents.AtheneAI.search.randomWalk;
 
 import java.util.ArrayDeque;
 

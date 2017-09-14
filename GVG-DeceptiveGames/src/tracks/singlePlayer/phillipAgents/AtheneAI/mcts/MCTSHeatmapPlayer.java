@@ -1,11 +1,10 @@
-package controllers.AtheneAI.mcts;
+package tracks.singlePlayer.phillipAgents.AtheneAI.mcts;
 
 import java.util.Random;
 
-import controllers.AtheneAI.heuristics.Heatmap;
-import controllers.AtheneAI.heuristics.Knowledge;
-import tools.ElapsedCpuTimer;
 import core.game.StateObservation;
+import tools.ElapsedCpuTimer;
+import tracks.singlePlayer.phillipAgents.AtheneAI.heuristics.Heatmap;
 
 /**
  * Created with IntelliJ IDEA. User: Diego Date: 07/11/13 Time: 17:13
@@ -66,7 +65,7 @@ public class MCTSHeatmapPlayer {
 
 		// Determine the best action to take and return it.
 		int action = m_root.mostVisitedAction();
-		//int action = m_root.bestAction();
+		// int action = m_root.bestAction();
 		return action;
 	}
 

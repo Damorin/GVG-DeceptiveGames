@@ -1,4 +1,4 @@
-package controllers.MnMCTS;
+package tracks.singlePlayer.phillipAgents.MnMCTS;
 
 public class LearnedModel {
     private double[] w;

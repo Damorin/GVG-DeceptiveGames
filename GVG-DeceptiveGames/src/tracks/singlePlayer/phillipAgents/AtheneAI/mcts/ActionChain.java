@@ -1,4 +1,4 @@
-package controllers.AtheneAI.mcts;
+package tracks.singlePlayer.phillipAgents.AtheneAI.mcts;
 
 import core.game.StateObservation;
 

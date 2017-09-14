@@ -1,4 +1,4 @@
-package controllers.SJA862;
+package tracks.singlePlayer.phillipAgents.SJA862;
 
 import core.game.StateObservation;
 import ontology.Types;

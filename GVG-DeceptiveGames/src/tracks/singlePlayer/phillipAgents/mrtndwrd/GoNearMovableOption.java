@@ -1,4 +1,4 @@
-package controllers.mrtndwrd;
+package tracks.singlePlayer.phillipAgents.mrtndwrd;
 
 import ontology.Types;
 import core.game.StateObservation;

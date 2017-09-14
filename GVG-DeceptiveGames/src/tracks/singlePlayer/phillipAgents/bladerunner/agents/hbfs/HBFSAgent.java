@@ -1,4 +1,4 @@
-package controllers.bladerunner.agents.hbfs;
+package tracks.singlePlayer.phillipAgents.bladerunner.agents.hbfs;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -10,12 +10,12 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import controllers.bladerunner.agents.GameAgent;
-import controllers.bladerunner.agents.misc.ObservationTools;
-import controllers.bladerunner.bladeRunner.Agent;
 import core.game.StateObservation;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.GameAgent;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.ObservationTools;
+import tracks.singlePlayer.phillipAgents.bladerunner.bladeRunner.Agent;
 
 // Heuristic Breadth First Search
 // 
@@ -56,18 +56,17 @@ public class HBFSAgent extends GameAgent {
 	public static final int STATE_IDLE = 3;
 	public static final int STATE_OTHER = 4;
 
-	public static final int prime = 179426549; //4583; // 4583; 7927; 13163; 18097;
-	
+	public static final int prime = 179426549; // 4583; // 4583; 7927; 13163; 18097;
+
 	public static int MAX_PIPE_LENGTH = 3000;
 	public static int MAX_REJECTION_SET_SIZE = 10000;
-	//public static int INITIAL_REJECTION_SET_CAPACITY = 4000;
-	public static int CARRY_OVER_PIPE_LENGTH_HEAD = (int) Math.round(MAX_PIPE_LENGTH*0.06);
-	public static int CARRY_OVER_PIPE_LENGTH_BODY = (int) Math.round(MAX_PIPE_LENGTH*0.04);;
-	
+	// public static int INITIAL_REJECTION_SET_CAPACITY = 4000;
+	public static int CARRY_OVER_PIPE_LENGTH_HEAD = (int) Math.round(MAX_PIPE_LENGTH * 0.06);
+	public static int CARRY_OVER_PIPE_LENGTH_BODY = (int) Math.round(MAX_PIPE_LENGTH * 0.04);;
 
 	public static final int callReportFrequency = 10000;
 
-	public static final double wLoad = -2; //-2; // -4
+	public static final double wLoad = -2; // -2; // -4
 	public static final double wPosition = 0;
 	public static final double wTileDiversity = -3; // -2
 	public static final double wEvents = -0.1;
@@ -85,7 +84,7 @@ public class HBFSAgent extends GameAgent {
 	public static final int reportFrequency = 100;
 	public static final int MAX_TICKS = 1800;
 	public static final int MAX_TICKS_2nd_TIMEOUT = 1950;
-	
+
 	public static int NUM_ACTIONS;
 	public static Types.ACTIONS[] ACTIONS;
 	public static int rootLoad = -1;
@@ -102,8 +101,8 @@ public class HBFSAgent extends GameAgent {
 	public Stack<Types.ACTIONS> actionSequence = null;
 
 	public PriorityQueue<HBFSNode> pipe = null;
-	//public HashSet<HBFSNode> visited = null;
-	public TreeSet<Integer> visited = null; 
+	// public HashSet<HBFSNode> visited = null;
+	public TreeSet<Integer> visited = null;
 	public HBFSNode hbfsRoot = null;
 	public HBFSNode hbfsSolution = null;
 
@@ -112,7 +111,6 @@ public class HBFSAgent extends GameAgent {
 	public int turnAroundSpeed = -1;
 	public int pipeEmptyEvents = 0;
 	public boolean hasTimedOut = false;
-	
 
 	private void initializeHbfs(StateObservation so) {
 		if (Agent.isVerbose) {
@@ -124,9 +122,9 @@ public class HBFSAgent extends GameAgent {
 		controllerState = STATE_OTHER;
 
 		pipe = new PriorityQueue<HBFSNode>(MAX_PIPE_LENGTH);
-		//visited = new HashSet<HBFSNode>(INITIAL_REJECTION_SET_CAPACITY);
+		// visited = new HashSet<HBFSNode>(INITIAL_REJECTION_SET_CAPACITY);
 		visited = new TreeSet<Integer>();
-		
+
 		// reset protocol statistics
 		stats_rejects = 0;
 		stats_nonUseful = 0;
@@ -140,7 +138,7 @@ public class HBFSAgent extends GameAgent {
 
 		hbfsRoot = new HBFSNode(so, null, null, 0);
 		rootObservationList = ObservationTools.getObsList(so);
-		
+
 		HBFSNode.setRootLoad(hbfsRoot.getLoad());
 		// HBFSNode.displayStateObservation(so);
 
@@ -156,7 +154,7 @@ public class HBFSAgent extends GameAgent {
 
 	public void testForwardModel(StateObservation so) {
 		System.out.println("HBFS::##Testing Forward Model...");
-		
+
 		StateObservation s0 = so;
 		int[] es = new int[ACTIONS.length];
 		int[] es2 = new int[ACTIONS.length];
@@ -182,10 +180,9 @@ public class HBFSAgent extends GameAgent {
 				s.push(so);
 			}
 			d[k] = es[k] - es2[k];
-			System.out.println("HBFS::" + ACTIONS[k]
-						+ " | ineffective on repeat: " + es2[k]
-						+ " | ineffective on 1st: " + es[k]);
-			
+			System.out.println(
+					"HBFS::" + ACTIONS[k] + " | ineffective on repeat: " + es2[k] + " | ineffective on 1st: " + es[k]);
+
 		}
 		for (StateObservation so2 : s) {
 			testForwardModel(so2);
@@ -202,7 +199,7 @@ public class HBFSAgent extends GameAgent {
 		actionSequence = null;
 		pipe = null;
 		visited = null;
-		// System.gc(); 
+		// System.gc();
 	}
 
 	@SuppressWarnings("unused")
@@ -211,8 +208,7 @@ public class HBFSAgent extends GameAgent {
 		if (pipe.isEmpty()) {
 			controllerState = STATE_OTHER;
 			if (Agent.isVerbose) {
-				System.out
-						.println("HBFS::performBfs was called on empty pipe. Changing to STATE_OTHER.");
+				System.out.println("HBFS::performBfs was called on empty pipe. Changing to STATE_OTHER.");
 			}
 			return false;
 		}
@@ -223,15 +219,14 @@ public class HBFSAgent extends GameAgent {
 			StateObservation soCopy = current.so.copy();
 			soCopy.advance(a);
 
-			if (elapsedTimer.remainingTimeMillis() < remTime) { 
+			if (elapsedTimer.remainingTimeMillis() < remTime) {
 				pipe.add(current); // could get stuck, but usually at least one node can be fully processed.
 				break;
 			}
-			
+
 			if (soCopy.isGameOver()) {
 				if (soCopy.getGameWinner() == Types.WINNER.PLAYER_WINS) {
-					hbfsSolution = new HBFSNode(soCopy, a, current,
-							current.depth + 1);
+					hbfsSolution = new HBFSNode(soCopy, a, current, current.depth + 1);
 					hbfsSolution.getEventScore();
 					return true;
 				}
@@ -251,7 +246,7 @@ public class HBFSAgent extends GameAgent {
 				}
 
 				HBFSNode m = new HBFSNode(soCopy, a, current, current.depth + 1);
-								
+
 				if (visited.add(m.hashCode())) {
 					pipe.add(m);
 					// visited.add(m);
@@ -264,10 +259,9 @@ public class HBFSAgent extends GameAgent {
 		}
 
 		if (pipe.isEmpty()) {
-			// Pipe is seeded with children of current and current itself 
+			// Pipe is seeded with children of current and current itself
 			if (Agent.isVerbose) {
-				System.out
-						.println("\nHBFS::#Pipe unexpectedly empty. Reseeding and clearing rejection set.");
+				System.out.println("\nHBFS::#Pipe unexpectedly empty. Reseeding and clearing rejection set.");
 			}
 			visited.clear();
 			for (Types.ACTIONS a : ACTIONS) {
@@ -293,7 +287,7 @@ public class HBFSAgent extends GameAgent {
 	private void resetPipe() {
 		Stack<HBFSNode> backup = new Stack<HBFSNode>();
 		for (int k = 0; k < CARRY_OVER_PIPE_LENGTH_HEAD; k++) {
-			backup.push(pipe.remove());	
+			backup.push(pipe.remove());
 		}
 		if (CARRY_OVER_PIPE_LENGTH_BODY > 0) {
 			int nth = pipe.size() / CARRY_OVER_PIPE_LENGTH_BODY;
@@ -336,8 +330,7 @@ public class HBFSAgent extends GameAgent {
 		initializeHbfs(so);
 
 		boolean hasTerminated = false;
-		while (!hasTerminated
-				&& elapsedTimer.remainingTimeMillis() > INITIALIZATION_REMTIME
+		while (!hasTerminated && elapsedTimer.remainingTimeMillis() > INITIALIZATION_REMTIME
 				&& controllerState == STATE_PLANNING) {
 			hasTerminated = performHbfs(elapsedTimer, INITIALIZATION_REMTIME);
 		}
@@ -363,20 +356,17 @@ public class HBFSAgent extends GameAgent {
 		}
 		if (Agent.isVerbose) {
 			System.out.println();
-			System.out
-					.format("HBFS::Pipe:%5d|R.Set:%5d|Rejects:%6d|Depth:%3d|Events:%3d|E.Score:%3.2f|D.Score:%3.2f|L.Score:%3.2f|T.Score:%3.2f|Score:%3.2f|B.Delta:%3.2f|C.Score:%3.2f|Speed:%3d",
-							pipe.size(), visited.size(), stats_rejects,
-							node.depth, node.so.getEventsHistory().size(),
-							node.getEventScore(), node.getTileDiversityScore(),
-							node.getLoadScore(), node.getTransformScore(), node.getScore(),
-							HBFSAgent.maxScoreDifference,
-							HBFSAgent.correspondingScore, turnAroundSpeed);
+			System.out.format(
+					"HBFS::Pipe:%5d|R.Set:%5d|Rejects:%6d|Depth:%3d|Events:%3d|E.Score:%3.2f|D.Score:%3.2f|L.Score:%3.2f|T.Score:%3.2f|Score:%3.2f|B.Delta:%3.2f|C.Score:%3.2f|Speed:%3d",
+					pipe.size(), visited.size(), stats_rejects, node.depth, node.so.getEventsHistory().size(),
+					node.getEventScore(), node.getTileDiversityScore(), node.getLoadScore(), node.getTransformScore(),
+					node.getScore(), HBFSAgent.maxScoreDifference, HBFSAgent.correspondingScore, turnAroundSpeed);
 		}
 	}
 
 	/**
-	 * Picks an action. This function is called every game step to request an
-	 * action from the player.
+	 * Picks an action. This function is called every game step to request an action
+	 * from the player.
 	 * 
 	 * @param so
 	 *            Observation of the current state.
@@ -397,15 +387,14 @@ public class HBFSAgent extends GameAgent {
 				}
 				controllerState = STATE_IDLE;
 				cleanHbfs(); // free handles to allow the garbage collector to
-							// start cleaning.
+								// start cleaning.
 				return Types.ACTIONS.ACTION_NIL;
 			}
 			if (Agent.isVerbose) {
 				if (HBFSAgent.IS_VERY_VERBOSE) {
 					HBFSNode.displayStateObservation(so);
 				}
-				System.out.println("HBFS::--Performing Action: "
-						+ actionSequence.peek());
+				System.out.println("HBFS::--Performing Action: " + actionSequence.peek());
 			}
 			return actionSequence.pop();
 
@@ -416,8 +405,7 @@ public class HBFSAgent extends GameAgent {
 			}
 			boolean hasTerminated = false;
 			turnAroundSpeed = 0;
-			while (!hasTerminated
-					&& elapsedTimer.remainingTimeMillis() > ACTION_REMTIME
+			while (!hasTerminated && elapsedTimer.remainingTimeMillis() > ACTION_REMTIME
 					&& controllerState == STATE_PLANNING) {
 				hasTerminated = performHbfs(elapsedTimer, ACTION_REMTIME);
 				turnAroundSpeed += 1;
@@ -427,26 +415,24 @@ public class HBFSAgent extends GameAgent {
 				actionSequence = hbfsSolution.getActionSequence();
 				if (Agent.isVerbose) {
 					System.out.println("\nHBFS::#Solution Found. ACTING Phase...");
-					System.out.println("Best Sequence Length: "
-							+ actionSequence.size());
+					System.out.println("Best Sequence Length: " + actionSequence.size());
 				}
 			}
-			if (hasTimedOut && so.getGameTick() > MAX_TICKS_2nd_TIMEOUT || (!hasTimedOut && so.getGameTick() > MAX_TICKS)) {
+			if (hasTimedOut && so.getGameTick() > MAX_TICKS_2nd_TIMEOUT
+					|| (!hasTimedOut && so.getGameTick() > MAX_TICKS)) {
 				controllerState = STATE_ACTING;
 				hbfsSolution = pipe.peek();
 				actionSequence = hbfsSolution.getActionSequence();
 				if (Agent.isVerbose) {
 					System.out.println("\nHBFS::#Timeout! ACTING Phase...");
-					System.out.println("Timeout Sequence Length: "
-							+ actionSequence.size());
+					System.out.println("Timeout Sequence Length: " + actionSequence.size());
 				}
 				hasTimedOut = true;
 			}
 			if (pipeEmptyEvents > 1) {
 				controllerState = STATE_ACTING;
 				actionSequence = new Stack<Types.ACTIONS>();
-				actionSequence
-						.push(ACTIONS[(int) Math.floor(Math.random() * 4)]);
+				actionSequence.push(ACTIONS[(int) Math.floor(Math.random() * 4)]);
 				if (Agent.isVerbose) {
 					System.out.println("\nHBFS::#Pipe Constantly Empty! Performing some move. ACTING Phase...");
 					System.out.println("HBFS::Random Sequence Length: " + actionSequence.size());
@@ -476,7 +462,7 @@ public class HBFSAgent extends GameAgent {
 		visited.clear();
 		resetPipe();
 		if (Agent.isVerbose) {
-			
+
 			System.out.print("RSc.");
 		}
 	}
@@ -486,21 +472,21 @@ public class HBFSAgent extends GameAgent {
 			FileWriter fos = new FileWriter("hashList.data");
 			PrintWriter dos = new PrintWriter(fos);
 			// loop through all your data and print it to the file
-			for (int q : hashList)
-			{
+			for (int q : hashList) {
 				dos.println(q);
 			}
 			dos.close();
 			fos.close();
 		} catch (Exception e) {
 			System.out.println("Couldn't write hash list.");
-	
+
 		}
 	}
-	
+
 	public static void displayHashingDiagnostics() {
-		System.out.println("HBFS::Hashing Diagnostics: " + HBFSAgent.equalCalls + " equal calls; " + HBFSAgent.hashCollisions +"/" + HBFSAgent.hashesEqual
-				+ " hash collisions/hashes equal" + "; collision fraction: " + (double)HBFSAgent.hashCollisions/(double)HBFSAgent.hashesEqual);
+		System.out.println("HBFS::Hashing Diagnostics: " + HBFSAgent.equalCalls + " equal calls; "
+				+ HBFSAgent.hashCollisions + "/" + HBFSAgent.hashesEqual + " hash collisions/hashes equal"
+				+ "; collision fraction: " + (double) HBFSAgent.hashCollisions / (double) HBFSAgent.hashesEqual);
 	}
 
 }

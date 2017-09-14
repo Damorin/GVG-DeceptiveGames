@@ -1,18 +1,18 @@
-package controllers.AtheneAI.search.randomWalk;
+package tracks.singlePlayer.phillipAgents.AtheneAI.search.randomWalk;
 
-import java.util.ArrayList;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Random;
 
-import controllers.AtheneAI.Agent;
-import controllers.AtheneAI.heuristics.Heatmap;
+import core.game.Observation;
+import core.game.StateObservation;
 import ontology.Types;
 import ontology.Types.ACTIONS;
 import tools.ElapsedCpuTimer;
-import core.game.Observation;
-import core.game.StateObservation;
+import tracks.singlePlayer.phillipAgents.AtheneAI.Agent;
+import tracks.singlePlayer.phillipAgents.AtheneAI.heuristics.Heatmap;
 
 public final class RandomWalkPlayer {
 
@@ -37,8 +37,7 @@ public final class RandomWalkPlayer {
 		nodesEvaluated = 0;
 	}
 
-	public ACTIONS solveStatic(StateObservation state,
-			ElapsedCpuTimer elapsedTimer, int newIters) {
+	public ACTIONS solveStatic(StateObservation state, ElapsedCpuTimer elapsedTimer, int newIters) {
 		ACTIONS nextAction = ACTIONS.ACTION_NIL;
 		if (!goalFound) {
 			oneStepPlans.clear();
@@ -58,8 +57,7 @@ public final class RandomWalkPlayer {
 			return nextAction;
 	}
 
-	public ACTIONS solveDynamic(StateObservation state,
-			ElapsedCpuTimer elapsedTimer, int newIters) {
+	public ACTIONS solveDynamic(StateObservation state, ElapsedCpuTimer elapsedTimer, int newIters) {
 		ACTIONS nextAction = ACTIONS.ACTION_NIL;
 		oneStepPlans.clear();
 		randomWalks.clear();
@@ -72,9 +70,9 @@ public final class RandomWalkPlayer {
 	}
 
 	/**
-	 * Filters all random walks. All plans whose first action is equal to the
-	 * given action remain, but their first action is removed. All other plans
-	 * are discarded.
+	 * Filters all random walks. All plans whose first action is equal to the given
+	 * action remain, but their first action is removed. All other plans are
+	 * discarded.
 	 * 
 	 * @param lastAction
 	 *            the last avatar action that was taken in the state
@@ -84,8 +82,7 @@ public final class RandomWalkPlayer {
 		LinkedList<ActionPlan> plansToRemove = new LinkedList<ActionPlan>();
 		for (ActionPlan ap : randomWalks) {
 			if (ap.actions.size() > 1) {
-				if (lastAction != ACTIONS.ACTION_NIL
-						&& ap.actions.getFirst() == lastAction) {
+				if (lastAction != ACTIONS.ACTION_NIL && ap.actions.getFirst() == lastAction) {
 					ap.actions.pop();
 				}
 			} else {
@@ -97,13 +94,13 @@ public final class RandomWalkPlayer {
 	}
 
 	/**
-	 * Given a state, this method creates all possible one-step plans. Only
-	 * stores one-step plans that didn't alter the state of the game apart from
-	 * the avatar position ( moved boxes etc. ).
+	 * Given a state, this method creates all possible one-step plans. Only stores
+	 * one-step plans that didn't alter the state of the game apart from the avatar
+	 * position ( moved boxes etc. ).
 	 */
 	private void createOneStepPlans(StateObservation state) {
-		ArrayList<ACTIONS> possibleActions = (Agent.hasOnlyDynamicMovables) ? state
-				.getAvailableActions(true) : state.getAvailableActions();
+		ArrayList<ACTIONS> possibleActions = (Agent.hasOnlyDynamicMovables) ? state.getAvailableActions(true)
+				: state.getAvailableActions();
 		while (!possibleActions.isEmpty()) {
 			int index = randomGenerator.nextInt(possibleActions.size());
 			ACTIONS action = possibleActions.get(index);
@@ -112,40 +109,36 @@ public final class RandomWalkPlayer {
 			nodesEvaluated++;
 			stateSave.advance(action);
 			if (action == ACTIONS.ACTION_NIL
-					|| (!gameStateChanged(state, stateSave) && avatarPositionChanged(
-							state, stateSave))) {
+					|| (!gameStateChanged(state, stateSave) && avatarPositionChanged(state, stateSave))) {
 				ArrayDeque<ACTIONS> actionPlan = new ArrayDeque<ACTIONS>();
 				actionPlan.add(action);
-				oneStepPlans.add(new ActionPlan(actionPlan, value(stateSave),
-						map.getScore(stateSave.getAvatarPosition())));
+				oneStepPlans
+						.add(new ActionPlan(actionPlan, value(stateSave), map.getScore(stateSave.getAvatarPosition())));
 			}
 		}
 	}
 
 	/**
-	 * As long as there's still enough time remaining, do random walks and store
-	 * the resulting action plans.
+	 * As long as there's still enough time remaining, do random walks and store the
+	 * resulting action plans.
 	 * 
 	 * @param newIterations
 	 *            how many iterations the random walk consists of
 	 */
-	private void createNewRandomWalks(StateObservation state,
-			int newIterations, ElapsedCpuTimer elapsedTimer) {
+	private void createNewRandomWalks(StateObservation state, int newIterations, ElapsedCpuTimer elapsedTimer) {
 
 		while (elapsedTimer.remainingTimeMillis() > 3l) {
 
 			StateObservation stateSave = state.copy();
 			ArrayDeque<ACTIONS> actionPlan = new ArrayDeque<ACTIONS>();
-			for (int i = 0; i < newIterations
-					&& elapsedTimer.remainingTimeMillis() > 2l; i++) {
+			for (int i = 0; i < newIterations && elapsedTimer.remainingTimeMillis() > 2l; i++) {
 				int index = randomGenerator.nextInt(Agent.actions.length);
 				ACTIONS action = Agent.actions[index];
 				actionPlan.add(action);
 				nodesEvaluated++;
 				stateSave.advance(action);
 			}
-			randomWalks.add(new ActionPlan(actionPlan, value(stateSave), map
-					.getScore(stateSave.getAvatarPosition())));
+			randomWalks.add(new ActionPlan(actionPlan, value(stateSave), map.getScore(stateSave.getAvatarPosition())));
 		}
 	}
 
@@ -166,10 +159,9 @@ public final class RandomWalkPlayer {
 		for (ActionPlan ap : oneStepPlans) {
 			// System.out.println("OneStepPlanScore for move "
 			// + ap.actions.getFirst() + " : " + ap.gameScore
-			// + "  Best Score: " + bestScore);
+			// + " Best Score: " + bestScore);
 			if (ap.gameScore > bestScore
-					|| (ap.gameScore == bestScore && ap.actions.size() < bestPlan.actions
-							.size())) {
+					|| (ap.gameScore == bestScore && ap.actions.size() < bestPlan.actions.size())) {
 				bestPlan = ap;
 				bestScore = ap.gameScore;
 			}
@@ -178,7 +170,7 @@ public final class RandomWalkPlayer {
 			goalActions = bestPlan.actions;
 		}
 		// System.out.println("Best Plan: " + bestPlan.actions.toString()
-		// + "  with Score: " + bestPlan.gameScore);
+		// + " with Score: " + bestPlan.gameScore);
 		return bestPlan;
 	}
 
@@ -188,26 +180,21 @@ public final class RandomWalkPlayer {
 	 * 
 	 * @return true if both gameStates are identical ( apart avatar positions )
 	 */
-	private boolean gameStateChanged(StateObservation _this,
-			StateObservation _that) {
-		ArrayList<Observation>[] _thisMovablePositions = _this
-				.getMovablePositions();
-		ArrayList<Observation>[] _thatMovablePositions = _that
-				.getMovablePositions();
+	private boolean gameStateChanged(StateObservation _this, StateObservation _that) {
+		ArrayList<Observation>[] _thisMovablePositions = _this.getMovablePositions();
+		ArrayList<Observation>[] _thatMovablePositions = _that.getMovablePositions();
 
-		return (!Agent.hasOnlyDynamicMovables && !(Arrays.deepEquals(
-				_thisMovablePositions, _thatMovablePositions)));
+		return (!Agent.hasOnlyDynamicMovables && !(Arrays.deepEquals(_thisMovablePositions, _thatMovablePositions)));
 	}
 
-	private boolean avatarPositionChanged(StateObservation _this,
-			StateObservation _that) {
-		return (_this.getAvatarPosition().x != _that.getAvatarPosition().x || _this
-				.getAvatarPosition().y != _that.getAvatarPosition().y);
+	private boolean avatarPositionChanged(StateObservation _this, StateObservation _that) {
+		return (_this.getAvatarPosition().x != _that.getAvatarPosition().x
+				|| _this.getAvatarPosition().y != _that.getAvatarPosition().y);
 	}
 
 	/**
-	 * Determines the value of a state. Only very basic heuristic for RandomWalk
-	 * to evaluate the score of an ActionPlan, quantity over quality.
+	 * Determines the value of a state. Only very basic heuristic for RandomWalk to
+	 * evaluate the score of an ActionPlan, quantity over quality.
 	 * 
 	 * @param a_gameState
 	 * @return a basic estimate of the value of a_gameState

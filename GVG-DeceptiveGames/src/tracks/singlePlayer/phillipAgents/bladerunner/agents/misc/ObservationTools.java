@@ -1,15 +1,15 @@
-package controllers.bladerunner.agents.misc;
+package tracks.singlePlayer.phillipAgents.bladerunner.agents.misc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import tools.Vector2d;
-import controllers.bladerunner.agents.hbfs.HBFSAgent;
-import controllers.bladerunner.agents.misc.pathplanning.PathPlanner;
 import core.game.Event;
 import core.game.Observation;
 import core.game.StateObservation;
+import tools.Vector2d;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.hbfs.HBFSAgent;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.pathplanning.PathPlanner;
 
 public class ObservationTools {
 
@@ -127,8 +127,8 @@ public class ObservationTools {
 	// So tile transformations is more general than events.
 
 	/*
-	 * getAnalysis with only one observation as parameter automatically compares
-	 * to the root please set root before you use this
+	 * getAnalysis with only one observation as parameter automatically compares to
+	 * the root please set root before you use this
 	 */
 	public static DefaultAnalysis getAnalysis(StateObservation so) {
 		DefaultAnalysis analysis;
@@ -137,8 +137,7 @@ public class ObservationTools {
 	}
 
 	/*
-	 * getAnalysis with two observation as parameter compares the two
-	 * observations
+	 * getAnalysis with two observation as parameter compares the two observations
 	 */
 	public static DefaultAnalysis getAnalysis(StateObservation so, StateObservation parent) {
 		DefaultAnalysis analysis;
@@ -206,8 +205,10 @@ public class ObservationTools {
 						if (trappedByImmovables[0].size() >= 2) {
 							if ((trappedByImmovables[0].get(0).sqDist - blockSquare) < 1
 									&& (trappedByImmovables[0].get(1).sqDist - blockSquare) < 1
-									&& Math.abs((trappedByImmovables[0].get(1).position.x - trappedByImmovables[0].get(0).position.x)
-											* (trappedByImmovables[0].get(1).position.y - trappedByImmovables[0].get(0).position.y)) > 1) {
+									&& Math.abs((trappedByImmovables[0].get(1).position.x
+											- trappedByImmovables[0].get(0).position.x)
+											* (trappedByImmovables[0].get(1).position.y
+													- trappedByImmovables[0].get(0).position.y)) > 1) {
 								isTrapped++;
 							} else {
 								// if surrounded by two immovable objects and a
@@ -251,8 +252,8 @@ public class ObservationTools {
 	}
 
 	/*
-	 * potential TODO: The movements are only calculated for the movables, not
-	 * for npcs or resources, if you think that it is necessary please add this
+	 * potential TODO: The movements are only calculated for the movables, not for
+	 * npcs or resources, if you think that it is necessary please add this
 	 */
 	private static int getMovements(StateObservation parentSo, StateObservation so) {
 		int nMov = 0;
@@ -291,7 +292,8 @@ public class ObservationTools {
 	/*
 	 * this method does the actual analysis
 	 */
-	public static DefaultAnalysis analyze(HashMap<Integer, Integer> rootObsList, StateObservation parentSo, StateObservation so) {
+	public static DefaultAnalysis analyze(HashMap<Integer, Integer> rootObsList, StateObservation parentSo,
+			StateObservation so) {
 		DefaultAnalysis analysis = new DefaultAnalysis();
 		HashMap<Integer, Integer> obsList = getObsList(so);
 		int currObsNumber = obsList.size();
@@ -397,13 +399,14 @@ public class ObservationTools {
 
 		for (int k : so.getAvatarResources().keySet()) {
 			if (PersistentStorage.previousAvatarRessources.containsKey(k)) {
-				ressourceDifference.put(k, so.getAvatarResources().get(k) - PersistentStorage.previousAvatarRessources.get(k));
+				ressourceDifference.put(k,
+						so.getAvatarResources().get(k) - PersistentStorage.previousAvatarRessources.get(k));
 			} else {
 				ressourceDifference.put(k, so.getAvatarResources().get(k));
 			}
 		}
 
-		//PersistentStorage.previousAvatarRessources = so.getAvatarResources();
+		// PersistentStorage.previousAvatarRessources = so.getAvatarResources();
 
 		return ressourceDifference;
 	}
@@ -418,7 +421,7 @@ public class ObservationTools {
 			}
 		}
 
-		//PersistentStorage.previousAvatarRessources = so.getAvatarResources();
+		// PersistentStorage.previousAvatarRessources = so.getAvatarResources();
 
 		return indicator;
 	}

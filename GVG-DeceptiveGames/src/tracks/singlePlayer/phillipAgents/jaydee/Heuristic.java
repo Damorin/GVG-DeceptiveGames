@@ -1,4 +1,4 @@
-package controllers.jaydee;
+package tracks.singlePlayer.phillipAgents.jaydee;
 
 import core.game.StateObservation;
 import ontology.Types;

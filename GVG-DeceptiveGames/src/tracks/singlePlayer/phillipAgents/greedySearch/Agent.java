@@ -1,4 +1,4 @@
-package controllers.greedySearch;
+package tracks.singlePlayer.phillipAgents.greedySearch;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package controllers.AIJim;
+package tracks.singlePlayer.phillipAgents.AIJim;
 
 import core.game.Event;
 import core.game.Observation;

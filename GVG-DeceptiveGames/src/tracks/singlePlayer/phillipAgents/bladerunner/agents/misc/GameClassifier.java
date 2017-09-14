@@ -1,8 +1,8 @@
-package controllers.bladerunner.agents.misc;
+package tracks.singlePlayer.phillipAgents.bladerunner.agents.misc;
 
-import controllers.bladerunner.bladeRunner.Agent;
-import ontology.Types;
 import core.game.StateObservation;
+import ontology.Types;
+import tracks.singlePlayer.phillipAgents.bladerunner.bladeRunner.Agent;
 
 public class GameClassifier {
 

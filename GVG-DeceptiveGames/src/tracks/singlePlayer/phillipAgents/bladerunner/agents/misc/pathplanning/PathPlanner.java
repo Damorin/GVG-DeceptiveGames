@@ -1,10 +1,10 @@
-package controllers.bladerunner.agents.misc.pathplanning;
+package tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.pathplanning;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-import controllers.bladerunner.bladeRunner.Agent;
 import ontology.Types;
+import tracks.singlePlayer.phillipAgents.bladerunner.bladeRunner.Agent;
 
 /**
  * An implementation of A*

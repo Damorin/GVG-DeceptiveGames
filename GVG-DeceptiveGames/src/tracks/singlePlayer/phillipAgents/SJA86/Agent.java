@@ -1,4 +1,4 @@
-package controllers.SJA86;
+package tracks.singlePlayer.phillipAgents.SJA86;
 
 import core.game.Observation;
 import core.game.StateObservation;

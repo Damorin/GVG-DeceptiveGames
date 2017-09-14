@@ -1,4 +1,4 @@
-package controllers.iterativeDeepening;
+package tracks.singlePlayer.phillipAgents.iterativeDeepening;
 
 import java.util.ArrayList;
 import java.util.Random;

@@ -1,28 +1,24 @@
-package controllers.bladerunner.bladeRunner;
+package tracks.singlePlayer.phillipAgents.bladerunner.bladeRunner;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import tools.Vector2d;
-import controllers.bladerunner.agents.GameAgent;
-import controllers.bladerunner.agents.hbfs.HBFSAgent;
-import controllers.bladerunner.agents.mcts.MCTSAgent;
-import controllers.bladerunner.agents.misc.AdjacencyMap;
-import controllers.bladerunner.agents.misc.DrawingTools;
-import controllers.bladerunner.agents.misc.GameClassifier;
-import controllers.bladerunner.agents.misc.ITypeAttractivity;
-import controllers.bladerunner.agents.misc.PersistentStorage;
-import controllers.bladerunner.agents.misc.RewardMap;
-import controllers.bladerunner.agents.misc.GameClassifier.GameType;
-import core.game.Observation;
-import controllers.bladerunner.agents.misc.pathplanning.PathPlanner;
 import core.game.Observation;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
+import tools.Vector2d;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.GameAgent;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.hbfs.HBFSAgent;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.mcts.MCTSAgent;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.AdjacencyMap;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.GameClassifier;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.GameClassifier.GameType;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.ITypeAttractivity;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.PersistentStorage;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.RewardMap;
 
 /**
  * The main agent holding subagents.
@@ -36,10 +32,10 @@ public class Agent extends AbstractPlayer {
 	public enum AgentType {
 		MCTS, BFS, MIXED
 	}
-	
+
 	ArrayList<Observation>[][] grid;
-	protected int blockSize; //only needed for the drawing
-	
+	protected int blockSize; // only needed for the drawing
+
 	public static final boolean isVerbose = true;
 
 	/**
@@ -77,21 +73,18 @@ public class Agent extends AbstractPlayer {
 		for (int i = 0; i < PersistentStorage.actions.length; ++i) {
 			PersistentStorage.actions[i] = act.get(i);
 		}
-			
 
 		// initialize exploration reward map with 1
 		PersistentStorage.rewMap = new RewardMap(so, 0.3);
-		
+
 		// set the MCTS_depth back
 		PersistentStorage.MCTS_DEPTH_RUN = PersistentStorage.MCTS_DEPTH_FIX;
-		
+
 		PersistentStorage.startingReward = 0;
 
-		
 		// initialize the adjacency map with the current state observation
 		PersistentStorage.adjacencyMap = new AdjacencyMap(so);
 
-		
 		PersistentStorage.previousAvatarRessources = new HashMap<>();
 
 		// Classify game
@@ -99,18 +92,17 @@ public class Agent extends AbstractPlayer {
 
 		// save some information over a set of games
 		PersistentStorage.GameCounter++;
-		
-		if((PersistentStorage.GameCounter-1) % 5 == 0){
-			//initialize new iTypeAttractivities otherwise keep them
+
+		if ((PersistentStorage.GameCounter - 1) % 5 == 0) {
+			// initialize new iTypeAttractivities otherwise keep them
 			int numActions = act.size();
 			// initialize ItypeAttracivity object for starting situation
-			PersistentStorage.iTypeAttractivity = new ITypeAttractivity(so,numActions);
+			PersistentStorage.iTypeAttractivity = new ITypeAttractivity(so, numActions);
 			PersistentStorage.lastGameState = null;
 			PersistentStorage.lastWinLoseExpectation = 0;
-		}
-		else {
-			//Check the last game state for reasons of death or win 
-			if(PersistentStorage.lastGameState != null){
+		} else {
+			// Check the last game state for reasons of death or win
+			if (PersistentStorage.lastGameState != null) {
 				StateObservation lastState = PersistentStorage.lastGameState;
 
 				Vector2d avPos = lastState.getAvatarPosition();
@@ -124,8 +116,11 @@ public class Agent extends AbstractPlayer {
 						if (npcs.size() > 0) {
 							// only look at the closest rewarding/punishing npc
 							Vector2d npcPos = npcs.get(0).position;
-							//check is NPS was adjacent
-							if(Math.sqrt(Math.pow(npcPos.x -avPos.x,2)+Math.pow(npcPos.y -avPos.y,2))-2 < Math.sqrt(2*blockSize*blockSize) && PersistentStorage.iTypeAttractivity.get(npcs.get(0).itype) < -0.5 && PersistentStorage.lastWinLoseExpectation < 0){
+							// check is NPS was adjacent
+							if (Math.sqrt(Math.pow(npcPos.x - avPos.x, 2) + Math.pow(npcPos.y - avPos.y, 2)) - 2 < Math
+									.sqrt(2 * blockSize * blockSize)
+									&& PersistentStorage.iTypeAttractivity.get(npcs.get(0).itype) < -0.5
+									&& PersistentStorage.lastWinLoseExpectation < 0) {
 								// I label the itype attractivy of those enemies as -2, since we died from them.
 								PersistentStorage.iTypeAttractivity.put(npcs.get(0).itype, -2.0);
 							}
@@ -136,7 +131,8 @@ public class Agent extends AbstractPlayer {
 		}
 
 		// use time that is left to build a tree or do BFS
-		if ((GameClassifier.getGameType() == GameType.STOCHASTIC || forcedAgentType == AgentType.MCTS) && forcedAgentType != AgentType.BFS) {
+		if ((GameClassifier.getGameType() == GameType.STOCHASTIC || forcedAgentType == AgentType.MCTS)
+				&& forcedAgentType != AgentType.BFS) {
 			// Create the player.
 			mctsAgent = new MCTSAgent(so, elapsedTimer, new Random());
 			currentAgent = mctsAgent;
@@ -148,8 +144,8 @@ public class Agent extends AbstractPlayer {
 	}
 
 	/**
-	 * Picks an action. This function is called every game step to request an
-	 * action from the player.
+	 * Picks an action. This function is called every game step to request an action
+	 * from the player.
 	 * 
 	 * @param stateObs
 	 *            Observation of the current state.
@@ -159,10 +155,10 @@ public class Agent extends AbstractPlayer {
 	 */
 	public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 		Types.ACTIONS action = Types.ACTIONS.ACTION_NIL;
-		
-		//this is just for the drawing. comment it out, if you don't need it
+
+		// this is just for the drawing. comment it out, if you don't need it
 		// DrawingTools.updateObservation(stateObs);
-		
+
 		try {
 			action = currentAgent.act(stateObs, elapsedTimer);
 		} catch (OutOfMemoryError e) {
@@ -254,24 +250,20 @@ public class Agent extends AbstractPlayer {
 			previousAgent = null;
 		}
 	}
-	
-	
-	
-	
-	
+
 	/**
-     * Gets the player the control to draw something on the screen.
-     * It can be used for debug purposes.
-     * The draw method of the agent is called by the framework (VGDLViewer) whenever it runs games visually
-     * Comment this out, when you do not need it
-     * We could draw anything!
-     * @param g Graphics device to draw to.
-     */
+	 * Gets the player the control to draw something on the screen. It can be used
+	 * for debug purposes. The draw method of the agent is called by the framework
+	 * (VGDLViewer) whenever it runs games visually Comment this out, when you do
+	 * not need it We could draw anything!
+	 * 
+	 * @param g
+	 *            Graphics device to draw to.
+	 */
 	/*
-    public void draw(Graphics2D g)
-    {
-        DrawingTools.draw(g);
-    }
-    */ //if you want to use that, you also have to uncomment DrawingTools.updateObservation() in the act method
-    
+	 * public void draw(Graphics2D g) { DrawingTools.draw(g); }
+	 */
+	// if you want to use that, you also have to uncomment
+	// DrawingTools.updateObservation() in the act method
+
 }

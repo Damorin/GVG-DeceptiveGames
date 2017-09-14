@@ -1,4 +1,4 @@
-package controllers.breadthFirstSearch;
+package tracks.singlePlayer.phillipAgents.breadthFirstSearch;
 
 import java.util.ArrayList;
 

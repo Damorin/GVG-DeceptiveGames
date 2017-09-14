@@ -1,21 +1,21 @@
-package controllers.AtheneAI;
+package tracks.singlePlayer.phillipAgents.AtheneAI;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
-import ontology.Types.ACTIONS;
-import tools.ElapsedCpuTimer;
-import controllers.AtheneAI.heuristics.Heatmap;
-import controllers.AtheneAI.heuristics.Knowledge;
-import controllers.AtheneAI.mcts.MCTSHeatmapPlayer;
-import controllers.AtheneAI.search.bfs.BFSPlayer;
-import controllers.AtheneAI.search.ehc.EHCPlayer;
-import controllers.AtheneAI.search.randomWalk.RandomWalkPlayer;
-import controllers.AtheneAI.util.GameTypeChecker;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
+import ontology.Types.ACTIONS;
+import tools.ElapsedCpuTimer;
+import tracks.singlePlayer.phillipAgents.AtheneAI.heuristics.Heatmap;
+import tracks.singlePlayer.phillipAgents.AtheneAI.heuristics.Knowledge;
+import tracks.singlePlayer.phillipAgents.AtheneAI.mcts.MCTSHeatmapPlayer;
+import tracks.singlePlayer.phillipAgents.AtheneAI.search.bfs.BFSPlayer;
+import tracks.singlePlayer.phillipAgents.AtheneAI.search.ehc.EHCPlayer;
+import tracks.singlePlayer.phillipAgents.AtheneAI.search.randomWalk.RandomWalkPlayer;
+import tracks.singlePlayer.phillipAgents.AtheneAI.util.GameTypeChecker;
 
 /**
  * 
@@ -92,13 +92,10 @@ public class Agent extends AbstractPlayer {
 		// detect game type
 		catchingGame = GameTypeChecker.isCatchingGame(so.copy());
 		ignoredSprites = new HashSet<Integer>();
-		deterministic = GameTypeChecker.isGameDeterministic(so.copy(),
-				elapsedTimer);
-		System.out.println("Ignore Sprites of the following types in BFS: "
-				+ ignoredSprites.toString());
+		deterministic = GameTypeChecker.isGameDeterministic(so.copy(), elapsedTimer);
+		System.out.println("Ignore Sprites of the following types in BFS: " + ignoredSprites.toString());
 
-		ArrayList<ACTIONS> act = (hasOnlyDynamicMovables) ? so
-				.getAvailableActions(true) : so.getAvailableActions();
+		ArrayList<ACTIONS> act = (hasOnlyDynamicMovables) ? so.getAvailableActions(true) : so.getAvailableActions();
 		actions = new ACTIONS[act.size()];
 		for (int i = 0; i < actions.length; ++i) {
 			actions[i] = act.get(i);
@@ -114,8 +111,8 @@ public class Agent extends AbstractPlayer {
 		// Heatmap
 		SECTOR_MAX_SIZE *= so.getBlockSize();
 		SECTOR_MIN_SIZE *= so.getBlockSize();
-		map = new Heatmap(SECTOR_MAX_SIZE, SECTOR_MIN_SIZE, HEATMAP_DELAY,
-				HEATMAP_DECAY, HEATMAP_REBOUND, HEATMAP_MAX_SCORE, so);
+		map = new Heatmap(SECTOR_MAX_SIZE, SECTOR_MIN_SIZE, HEATMAP_DELAY, HEATMAP_DECAY, HEATMAP_REBOUND,
+				HEATMAP_MAX_SCORE, so);
 
 		// instantiate the needed agents for the detected game type
 		if (catchingGame) {
@@ -143,8 +140,8 @@ public class Agent extends AbstractPlayer {
 	}
 
 	/**
-	 * Picks an action. This function is called every game step to request an
-	 * action from the player.
+	 * Picks an action. This function is called every game step to request an action
+	 * from the player.
 	 * 
 	 * @param stateObs
 	 *            Observation of the current state.
@@ -159,13 +156,11 @@ public class Agent extends AbstractPlayer {
 		overallIterations++;
 		if (catchingGame) {
 
-			ArrayList<Integer> goodMovablesIds = Knowledge
-					.getGoodMovables(stateObs);
+			ArrayList<Integer> goodMovablesIds = Knowledge.getGoodMovables(stateObs);
 			if (!goodMovablesIds.isEmpty()) {
 
 				// determine next action with EHC
-				return ehcPlayer.getBestAction(stateObs, elapsedTimer,
-						goodMovablesIds);
+				return ehcPlayer.getBestAction(stateObs, elapsedTimer, goodMovablesIds);
 
 			} else {
 
@@ -196,15 +191,13 @@ public class Agent extends AbstractPlayer {
 			map.addVisit(stateObs.getAvatarPosition());
 
 			/*
-			 * check if there's still meaningful time for BFS, otherwise switch
-			 * to random walk
+			 * check if there's still meaningful time for BFS, otherwise switch to random
+			 * walk
 			 */
 			if (overallIterations > (1950 - bfsPlayer.bestNodeTrace.size()) && doBFS) {
-				System.out
-						.println("Permanently switching to RandomWalk due to time constraints");
+				System.out.println("Permanently switching to RandomWalk due to time constraints");
 				if (intermediateTrace.isEmpty()) {
-					intermediateTrace = new ArrayDeque<ACTIONS>(
-							bfsPlayer.getIntermediateResult());
+					intermediateTrace = new ArrayDeque<ACTIONS>(bfsPlayer.getIntermediateResult());
 				}
 				doBFS = false;
 			}
@@ -215,8 +208,7 @@ public class Agent extends AbstractPlayer {
 			} else if (doBFS) {
 				// still time for BFS
 				if (intermediateTrace.isEmpty()) {
-					if (bfsIterations <= MAX_BFS_ITERATIONS
-							&& !bfsPlayer.disabled) {
+					if (bfsIterations <= MAX_BFS_ITERATIONS && !bfsPlayer.disabled) {
 						if (!bfsPlayer.reachedGoalState) {
 							bfsIterations++;
 							bfsPlayer.solve(stateObs, elapsedTimer, 4l);
@@ -231,14 +223,11 @@ public class Agent extends AbstractPlayer {
 						}
 					}
 					/*
-					 * BFS iteration limit reached, try intermediate result and
-					 * reset BFS.
+					 * BFS iteration limit reached, try intermediate result and reset BFS.
 					 */
 					else if (bfsIterations > MAX_BFS_ITERATIONS) {
-						System.out.println("Iteration " + overallIterations
-								+ ": Trying intermediate walk");
-						intermediateTrace = new ArrayDeque<ACTIONS>(
-								bfsPlayer.getIntermediateResult());
+						System.out.println("Iteration " + overallIterations + ": Trying intermediate walk");
+						intermediateTrace = new ArrayDeque<ACTIONS>(bfsPlayer.getIntermediateResult());
 						bfsIterations = 0;
 						bfsPlayer.reset();
 					}
@@ -251,14 +240,13 @@ public class Agent extends AbstractPlayer {
 			if (!intermediateTrace.isEmpty())
 				return intermediateTrace.pop();
 			/*
-			 * BFS gets disabled if it's too ineffective. Does RandomWalks
-			 * instead, once a positive score is reached try BFS again.
+			 * BFS gets disabled if it's too ineffective. Does RandomWalks instead, once a
+			 * positive score is reached try BFS again.
 			 */
 			if (bfsPlayer.disabled) {
 				if (randomWalkIterations < 200) {
 					randomWalkIterations++;
-					return randomWalkPlayer.solveStatic(stateObs, elapsedTimer,
-							RANDOMWALK_DEPTH);
+					return randomWalkPlayer.solveStatic(stateObs, elapsedTimer, RANDOMWALK_DEPTH);
 				} else {
 					if (doBFS && stateObs.getGameScore() > 0) {
 						bfsPlayer.disabled = false;
@@ -266,12 +254,10 @@ public class Agent extends AbstractPlayer {
 						randomWalkIterations = 0;
 						System.out.println("Trying BFS again");
 					}
-					return randomWalkPlayer.solveStatic(stateObs, elapsedTimer,
-							RANDOMWALK_DEPTH);
+					return randomWalkPlayer.solveStatic(stateObs, elapsedTimer, RANDOMWALK_DEPTH);
 				}
 			}
-			return randomWalkPlayer.solveStatic(stateObs, elapsedTimer,
-					RANDOMWALK_DEPTH);
+			return randomWalkPlayer.solveStatic(stateObs, elapsedTimer, RANDOMWALK_DEPTH);
 		}
 	}
 }

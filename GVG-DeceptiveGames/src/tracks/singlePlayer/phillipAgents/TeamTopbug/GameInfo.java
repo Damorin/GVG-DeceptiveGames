@@ -1,4 +1,4 @@
-package controllers.TeamTopbug;
+package tracks.singlePlayer.phillipAgents.TeamTopbug;
 
 import core.game.Observation;
 import core.game.StateObservation;

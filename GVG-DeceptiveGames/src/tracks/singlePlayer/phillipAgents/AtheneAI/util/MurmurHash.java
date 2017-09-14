@@ -1,4 +1,4 @@
-package controllers.AtheneAI.util;
+package tracks.singlePlayer.phillipAgents.AtheneAI.util;
 
 
 /** Murmur hash 2.0.

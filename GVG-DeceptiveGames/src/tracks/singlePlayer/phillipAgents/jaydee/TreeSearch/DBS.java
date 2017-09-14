@@ -1,13 +1,14 @@
-package controllers.jaydee.TreeSearch;
+package tracks.singlePlayer.phillipAgents.jaydee.TreeSearch;
 
-import controllers.jaydee.Agent;
-import controllers.jaydee.Node;
-import controllers.jaydee.SortedList;
-import controllers.jaydee.Utils;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import core.game.StateObservation;
-import org.omg.PortableInterceptor.ORBIdHelper;
-
-import java.util.*;
+import tracks.singlePlayer.phillipAgents.jaydee.Agent;
+import tracks.singlePlayer.phillipAgents.jaydee.Node;
+import tracks.singlePlayer.phillipAgents.jaydee.Utils;
 
 public class DBS extends TreeSearch {
     public DBS(Node origin) {

@@ -1,4 +1,4 @@
-package controllers.AtheneAI.search.waysolving;
+package tracks.singlePlayer.phillipAgents.AtheneAI.search.waysolving;
 
 import java.util.LinkedList;
 import java.util.List;

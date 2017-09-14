@@ -1,15 +1,15 @@
-package controllers.AtheneAI.mcts;
+package tracks.singlePlayer.phillipAgents.AtheneAI.mcts;
 
 import java.util.Random;
 
-import controllers.AtheneAI.Agent;
-import controllers.AtheneAI.heuristics.Heatmap;
-import controllers.AtheneAI.heuristics.Knowledge;
+import core.game.Event;
+import core.game.StateObservation;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Utils;
-import core.game.Event;
-import core.game.StateObservation;
+import tracks.singlePlayer.phillipAgents.AtheneAI.Agent;
+import tracks.singlePlayer.phillipAgents.AtheneAI.heuristics.Heatmap;
+import tracks.singlePlayer.phillipAgents.AtheneAI.heuristics.Knowledge;
 
 public class SingleTreeNode {
 	private static final double HUGE_NEGATIVE = -1000000.0;
@@ -22,8 +22,7 @@ public class SingleTreeNode {
 	public int nVisits;
 	public static Random m_rnd;
 	public int m_depth;
-	protected static double[] bounds = new double[] { Double.MAX_VALUE,
-			-Double.MAX_VALUE };
+	protected static double[] bounds = new double[] { Double.MAX_VALUE, -Double.MAX_VALUE };
 	public int childIdx;
 	public ActionChain actionChain;
 
@@ -120,12 +119,9 @@ public class SingleTreeNode {
 			// System.out.println("norm child value: " + childValue);
 
 			double uctValue = childValue
-					+ Agent.K
-					* Math.sqrt(Math.log(this.nVisits + 1)
-							/ (child.nVisits + this.epsilon));
+					+ Agent.K * Math.sqrt(Math.log(this.nVisits + 1) / (child.nVisits + this.epsilon));
 
-			uctValue = Utils.noise(uctValue, this.epsilon,
-					this.m_rnd.nextDouble()); // break ties randomly
+			uctValue = Utils.noise(uctValue, this.epsilon, this.m_rnd.nextDouble()); // break ties randomly
 
 			// small sampleRandom numbers: break ties in unexpanded nodes
 			if (uctValue > bestValue) {
@@ -134,9 +130,8 @@ public class SingleTreeNode {
 			}
 		}
 		if (selected == null) {
-			throw new RuntimeException("Warning! returning null: " + bestValue
-					+ " : " + this.children.length + " " + +bounds[0] + " "
-					+ bounds[1]);
+			throw new RuntimeException("Warning! returning null: " + bestValue + " : " + this.children.length + " "
+					+ +bounds[0] + " " + bounds[1]);
 		}
 
 		// Roll the state:
@@ -175,8 +170,7 @@ public class SingleTreeNode {
 		double delta = value(state, map, thisDepth);
 
 		if (actionChain == null)
-			actionChain = new ActionChain(Agent.NUM_ACTIONS, actions, delta,
-					Agent.TEMPERATURE);
+			actionChain = new ActionChain(Agent.NUM_ACTIONS, actions, delta, Agent.TEMPERATURE);
 		else {
 			if (delta > actionChain.getScore())
 				actionChain.setNewPropabilities(actions, delta);
@@ -193,17 +187,14 @@ public class SingleTreeNode {
 		return delta;
 	}
 
-	public double value(StateObservation a_gameState, Heatmap map,
-			int depth) {
+	public double value(StateObservation a_gameState, Heatmap map, int depth) {
 
 		boolean gameOver = a_gameState.isGameOver();
 		Types.WINNER win = a_gameState.getGameWinner();
-		double rawScore = Agent.REAL_SCORE_FACTOR * a_gameState.getGameScore()
-				- Agent.lastScore;
+		double rawScore = Agent.REAL_SCORE_FACTOR * a_gameState.getGameScore() - Agent.lastScore;
 
 		boolean collision = !a_gameState.getEventsHistory().isEmpty()
-				&& a_gameState.getEventsHistory().last().gameStep == a_gameState
-						.getGameTick() - 1;
+				&& a_gameState.getEventsHistory().last().gameStep == a_gameState.getGameTick() - 1;
 
 		if (collision) {
 			Event e = a_gameState.getEventsHistory().last();
@@ -212,8 +203,7 @@ public class SingleTreeNode {
 			rawScore += 10 * Knowledge.getBenefit(agentTypeId, passiveTypeId);
 		}
 
-		rawScore += Agent.HEATMAP_SCORE_FACTOR
-				* map.getScore(a_gameState.getAvatarPosition());
+		rawScore += Agent.HEATMAP_SCORE_FACTOR * map.getScore(a_gameState.getAvatarPosition());
 
 		// rawScore += experience...
 
@@ -261,8 +251,7 @@ public class SingleTreeNode {
 				}
 
 				double childValue = children[i].nVisits;
-				childValue = Utils.noise(childValue, this.epsilon,
-						this.m_rnd.nextDouble()); // break ties randomly
+				childValue = Utils.noise(childValue, this.epsilon, this.m_rnd.nextDouble()); // break ties randomly
 				if (childValue > bestValue) {
 					bestValue = childValue;
 					selected = i;
@@ -288,10 +277,8 @@ public class SingleTreeNode {
 
 			if (children[i] != null) {
 				// double tieBreaker = m_rnd.nextDouble() * epsilon;
-				double childValue = children[i].totValue
-						/ (children[i].nVisits + this.epsilon);
-				childValue = Utils.noise(childValue, this.epsilon,
-						this.m_rnd.nextDouble()); // break ties randomly
+				double childValue = children[i].totValue / (children[i].nVisits + this.epsilon);
+				childValue = Utils.noise(childValue, this.epsilon, this.m_rnd.nextDouble()); // break ties randomly
 				if (childValue > bestValue) {
 					bestValue = childValue;
 					selected = i;

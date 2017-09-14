@@ -1,12 +1,15 @@
-package controllers.jaydee.TreeSearch;
-
-import controllers.jaydee.*;
-import core.game.StateObservation;
-import ontology.Types;
+package tracks.singlePlayer.phillipAgents.jaydee.TreeSearch;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+
+import core.game.StateObservation;
+import ontology.Types;
+import tracks.singlePlayer.phillipAgents.jaydee.Agent;
+import tracks.singlePlayer.phillipAgents.jaydee.GameInfo;
+import tracks.singlePlayer.phillipAgents.jaydee.Node;
+import tracks.singlePlayer.phillipAgents.jaydee.NodePool;
+import tracks.singlePlayer.phillipAgents.jaydee.SortedList;
 
 public class GA extends TreeSearch {
     public static int    GA_POPULATION_SIZE = 50; // 10,25,50,100

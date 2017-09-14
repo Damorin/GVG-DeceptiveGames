@@ -1,15 +1,15 @@
-package controllers.AtheneAI.search.dfs;
+package tracks.singlePlayer.phillipAgents.AtheneAI.search.dfs;
 
 import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import core.game.StateObservation;
 import ontology.Types;
 import ontology.Types.ACTIONS;
 import tools.ElapsedCpuTimer;
-import controllers.AtheneAI.Agent;
-import core.game.StateObservation;
+import tracks.singlePlayer.phillipAgents.AtheneAI.Agent;
 
 public final class DFS {
 
@@ -41,8 +41,8 @@ public final class DFS {
 	 * @param currentIteration
 	 * @return
 	 */
-	protected final LinkedList<ACTIONS> solve(StateObservation root,
-			ElapsedCpuTimer elapsedTimer, boolean reset, int maxDepth) {
+	protected final LinkedList<ACTIONS> solve(StateObservation root, ElapsedCpuTimer elapsedTimer, boolean reset,
+			int maxDepth) {
 
 		LinkedList<ACTIONS> highestValueTrace = new LinkedList<ACTIONS>();
 		reachedGoalState = false;
@@ -53,8 +53,8 @@ public final class DFS {
 			nodesSave = new ArrayDeque<DFSNode>();
 		}
 
-		highestValueTrace = runDFS(maxDepth, new DFSNode(root.copy(), null, 0,
-				root.getAvatarLastAction()), elapsedTimer);
+		highestValueTrace = runDFS(maxDepth, new DFSNode(root.copy(), null, 0, root.getAvatarLastAction()),
+				elapsedTimer);
 
 		if (reachedGoalState) {
 			System.out.println("Trace to Win: " + highestValueTrace.toString());
@@ -74,8 +74,7 @@ public final class DFS {
 	 * @param elapsedTimer
 	 * @return
 	 */
-	private final LinkedList<ACTIONS> runDFS(int depth, DFSNode root,
-			ElapsedCpuTimer elapsedTimer) {
+	private final LinkedList<ACTIONS> runDFS(int depth, DFSNode root, ElapsedCpuTimer elapsedTimer) {
 		ArrayDeque<DFSNode> nodes = nodesSave;
 		if (nodes.isEmpty())
 			nodes.push(root);
@@ -85,13 +84,12 @@ public final class DFS {
 		) {
 			DFSNode node = nodes.pop();
 			// StateObservation state = node.state;
-			// System.out.println("Node.depth " + node.depth + "  Path: "
+			// System.out.println("Node.depth " + node.depth + " Path: "
 			// + actionsToReachNode);
 			if (node.depth < depth) {
 				/*
-				 * Even this basic check for removing useless actions costs so
-				 * much performance that it's probably wiser to skip it (see
-				 * chooseRandomAction implementation)
+				 * Even this basic check for removing useless actions costs so much performance
+				 * that it's probably wiser to skip it (see chooseRandomAction implementation)
 				 */
 				// List<ACTIONS> possibleActions = getSensibleActions(state);
 
@@ -110,18 +108,15 @@ public final class DFS {
 			}
 
 			/*
-			 * If not all possible actions are taken into account ( e.g.
-			 * branching factor 1 with random actions ), pushing the root to the
-			 * stack of nodes enables us to search multiple times for a solution
-			 * within runDFS.
+			 * If not all possible actions are taken into account ( e.g. branching factor 1
+			 * with random actions ), pushing the root to the stack of nodes enables us to
+			 * search multiple times for a solution within runDFS.
 			 * 
-			 * TODO: Check for correctness, debugging shows a lot of cases where
-			 * not even one action is taken after adding the root.
+			 * TODO: Check for correctness, debugging shows a lot of cases where not even
+			 * one action is taken after adding the root.
 			 */
-			if (nodes.isEmpty() && reachedGoalState == false
-					&& elapsedTimer.remainingTimeMillis() > 5) {
-				nodes.push(new DFSNode(root.state.copy(), null, 0, root.state
-						.getAvatarLastAction()));
+			if (nodes.isEmpty() && reachedGoalState == false && elapsedTimer.remainingTimeMillis() > 5) {
+				nodes.push(new DFSNode(root.state.copy(), null, 0, root.state.getAvatarLastAction()));
 			}
 		}
 
@@ -142,8 +137,8 @@ public final class DFS {
 		/*
 		 * #### USED IF INTERMEDIATE TRACES ARE RETURNED AS WELL. ####
 		 * 
-		 * TODO: Still needs integration + switching between returning single
-		 * actions and whole traces.
+		 * TODO: Still needs integration + switching between returning single actions
+		 * and whole traces.
 		 */
 		// if (!reachedGoalState) {
 		// nodesSave = nodes;
@@ -181,27 +176,26 @@ public final class DFS {
 	}
 
 	/**
-	 * Given an array of possible actions and a node, it chooses one random
-	 * action and adds the resulting childNode to a stack of nodes.
+	 * Given an array of possible actions and a node, it chooses one random action
+	 * and adds the resulting childNode to a stack of nodes.
 	 */
-	private final void chooseRandomAction(ArrayDeque<DFSNode> nodesStack,
-			DFSNode currentNode, ACTIONS[] possibleActions) {
+	private final void chooseRandomAction(ArrayDeque<DFSNode> nodesStack, DFSNode currentNode,
+			ACTIONS[] possibleActions) {
 		if (possibleActions.length > 0) {
 			int index = randomGenerator.nextInt(possibleActions.length);
 			ACTIONS a = possibleActions[index];
 
 			StateObservation stateCopy = currentNode.state.copy();
 			stateCopy.advance(a);
-			DFSNode childNode = new DFSNode(stateCopy, currentNode,
-					currentNode.depth + 1, a);
+			DFSNode childNode = new DFSNode(stateCopy, currentNode, currentNode.depth + 1, a);
 			nodesStack.push(childNode);
 
 			double stateValue = value(stateCopy);
 			nodesEvaluated++;
 			if (reachedGoalState) {
 				/*
-				 * Found goal state, create LinkedList of all actions from the
-				 * original root to the goal state.
+				 * Found goal state, create LinkedList of all actions from the original root to
+				 * the goal state.
 				 */
 				goalTrace = buildGoalTrace(childNode);
 			}
@@ -212,11 +206,11 @@ public final class DFS {
 	}
 
 	/**
-	 * Given a list of possible actions and a node, it chooses the action with
-	 * the highest value and adds the resulting childNode to a stack of nodes.
+	 * Given a list of possible actions and a node, it chooses the action with the
+	 * highest value and adds the resulting childNode to a stack of nodes.
 	 */
-	private final void chooseBestAction(ArrayDeque<DFSNode> nodesStack,
-			DFSNode currentNode, List<ACTIONS> possibleActions) {
+	private final void chooseBestAction(ArrayDeque<DFSNode> nodesStack, DFSNode currentNode,
+			List<ACTIONS> possibleActions) {
 		DFSNode childNode = null;
 		double bestChild = Double.NEGATIVE_INFINITY;
 		while (!possibleActions.isEmpty()) {
@@ -231,8 +225,7 @@ public final class DFS {
 				goalTrace = buildGoalTrace(childNode);
 			}
 			if (stateValue > bestChild) {
-				childNode = new DFSNode(stateCopy, currentNode,
-						currentNode.depth + 1, a);
+				childNode = new DFSNode(stateCopy, currentNode, currentNode.depth + 1, a);
 				bestChild = stateValue;
 				if (bestChild > bestScoreSeen) {
 					bestScoreSeen = stateValue;
@@ -245,19 +238,18 @@ public final class DFS {
 	}
 
 	/**
-	 * Given a list of possible actions and a node, it chooses all action and
-	 * adds the resulting childNodes to a stack of nodes.
+	 * Given a list of possible actions and a node, it chooses all action and adds
+	 * the resulting childNodes to a stack of nodes.
 	 */
-	private final void chooseAllActions(ArrayDeque<DFSNode> nodesStack,
-			DFSNode currentNode, List<ACTIONS> possibleActions) {
+	private final void chooseAllActions(ArrayDeque<DFSNode> nodesStack, DFSNode currentNode,
+			List<ACTIONS> possibleActions) {
 		while (!possibleActions.isEmpty()) {
 			int index = randomGenerator.nextInt(possibleActions.size());
 			ACTIONS a = possibleActions.get(index);
 			possibleActions.remove(index);
 			StateObservation stateCopy = currentNode.state.copy();
 			stateCopy.advance(a);
-			DFSNode childNode = new DFSNode(stateCopy, currentNode,
-					currentNode.depth + 1, a);
+			DFSNode childNode = new DFSNode(stateCopy, currentNode, currentNode.depth + 1, a);
 			double stateValue = value(stateCopy);
 			nodesEvaluated++;
 			if (reachedGoalState) {
@@ -271,8 +263,8 @@ public final class DFS {
 	}
 
 	/**
-	 * Determines the value of a state. Only very
-	 * basic heuristic for DFS, quantity over quality.
+	 * Determines the value of a state. Only very basic heuristic for DFS, quantity
+	 * over quality.
 	 * 
 	 * @param a_gameState
 	 * @param map

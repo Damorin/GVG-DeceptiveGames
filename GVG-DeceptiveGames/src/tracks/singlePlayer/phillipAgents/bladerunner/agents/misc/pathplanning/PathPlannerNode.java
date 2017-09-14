@@ -1,10 +1,10 @@
-package controllers.bladerunner.agents.misc.pathplanning;
+package tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.pathplanning;
 
 import java.util.ArrayList;
-import controllers.bladerunner.agents.misc.PersistentStorage;
-import controllers.bladerunner.bladeRunner.Agent;
-import ontology.Types;
+
 import ontology.Types.ACTIONS;
+import tracks.singlePlayer.phillipAgents.bladerunner.agents.misc.PersistentStorage;
+import tracks.singlePlayer.phillipAgents.bladerunner.bladeRunner.Agent;
 
 /**
  * Node Class Computes hashcodes and heuristic.

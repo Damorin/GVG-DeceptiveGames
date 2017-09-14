@@ -1,8 +1,8 @@
-package controllers.jaydee.TreeSearch;
+package tracks.singlePlayer.phillipAgents.jaydee.TreeSearch;
 
-import controllers.jaydee.Agent;
-import controllers.jaydee.Node;
 import core.game.StateObservation;
+import tracks.singlePlayer.phillipAgents.jaydee.Agent;
+import tracks.singlePlayer.phillipAgents.jaydee.Node;
 
 public class MCTS extends TreeSearch {
     public static final int MAX_SELECTION_DEPTH = 3;

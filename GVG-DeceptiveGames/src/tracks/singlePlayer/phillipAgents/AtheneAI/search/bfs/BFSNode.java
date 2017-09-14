@@ -1,4 +1,4 @@
-package controllers.AtheneAI.search.bfs;
+package tracks.singlePlayer.phillipAgents.AtheneAI.search.bfs;
 
 import java.util.ArrayList;
 

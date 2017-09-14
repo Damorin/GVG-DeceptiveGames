@@ -1,4 +1,4 @@
-package controllers.mrtndwrd;
+package tracks.singlePlayer.phillipAgents.mrtndwrd;
 
 import core.game.Observation;
 import core.game.StateObservation;

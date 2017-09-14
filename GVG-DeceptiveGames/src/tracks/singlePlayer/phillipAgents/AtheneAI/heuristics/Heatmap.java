@@ -1,4 +1,4 @@
-package controllers.AtheneAI.heuristics;
+package tracks.singlePlayer.phillipAgents.AtheneAI.heuristics;
 
 import tools.Vector2d;
 import core.game.StateObservation;

@@ -1,57 +1,58 @@
-package controllers.TeamTopbug.TreeSearch;
+package tracks.singlePlayer.phillipAgents.TeamTopbug.TreeSearch;
 
-import controllers.TeamTopbug.Agent;
-import controllers.TeamTopbug.Node;
-import controllers.TeamTopbug.SortedList;
-import controllers.TeamTopbug.Utils;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import core.game.StateObservation;
-import org.omg.PortableInterceptor.ORBIdHelper;
-
-import java.util.*;
+import tracks.singlePlayer.phillipAgents.TeamTopbug.Agent;
+import tracks.singlePlayer.phillipAgents.TeamTopbug.Node;
+import tracks.singlePlayer.phillipAgents.TeamTopbug.Utils;
 
 public class DBS extends TreeSearch {
-    public DBS(Node origin) {
-        super(origin);
-    }
+	public DBS(Node origin) {
+		super(origin);
+	}
 
-    @Override
-    public void search() {
-        Queue<Node> queue = new LinkedList<Node>();
-        queue.add(this.origin);
+	@Override
+	public void search() {
+		Queue<Node> queue = new LinkedList<Node>();
+		queue.add(this.origin);
 
-        //System.out.println(origin.depth);
-        int maxD = -1;
-        while (!Agent.anyTime.isTimeOver()  && !queue.isEmpty()) {
-            Agent.anyTime.updatePerLoop();
+		// System.out.println(origin.depth);
+		int maxD = -1;
+		while (!Agent.anyTime.isTimeOver() && !queue.isEmpty()) {
+			Agent.anyTime.updatePerLoop();
 
-            Node current = queue.remove();
-            if(current.state.isGameOver()){
-                continue;
-            }
-            if(current.children.isEmpty()) {
-                current.expand();
-            } else {
-                StateObservation obs = current.state;
-                for(Node child: current.children.values()) {
-                    current.state = obs.copy();
-                    child.update();
-                    child.updateAverageReward();
-                }
-            }
-            List<Node> children = new LinkedList<Node>();
-            children.addAll(current.children.values());
-            Collections.sort(children, Utils.heuristicComparator);
-            queue.addAll(children);
-            if(current.depth > maxD) {
-                maxD = current.depth;
-            }
-        }
-        System.out.println(maxD);
-        System.out.println(queue.size());
-    }
+			Node current = queue.remove();
+			if (current.state.isGameOver()) {
+				continue;
+			}
+			if (current.children.isEmpty()) {
+				current.expand();
+			} else {
+				StateObservation obs = current.state;
+				for (Node child : current.children.values()) {
+					current.state = obs.copy();
+					child.update();
+					child.updateAverageReward();
+				}
+			}
+			List<Node> children = new LinkedList<Node>();
+			children.addAll(current.children.values());
+			Collections.sort(children, Utils.heuristicComparator);
+			queue.addAll(children);
+			if (current.depth > maxD) {
+				maxD = current.depth;
+			}
+		}
+		System.out.println(maxD);
+		System.out.println(queue.size());
+	}
 
-    @Override
-    public void roll(Node origin) {
-        this.origin = origin;
-    }
+	@Override
+	public void roll(Node origin) {
+		this.origin = origin;
+	}
 }
