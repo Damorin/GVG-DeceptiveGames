@@ -73,11 +73,8 @@ public class Test {
 					"sokoban", "solarfox", "superman", "surround", "survivezombies", // 75-79
 					"tercio", "thecitadel", "thesnowman", "waitforbreakfast", "watergame", // 80-84
 					"waves", "whackamole", "wildgunman", "witnessprotection", "wrapsokoban", // 85-89
-					"zelda", "zenpuzzle", "decepticoins", "deceptizelda", "sistersavior", "waferthinmints" }; // 90, 91,
-																												// 92,
-																												// 93,
-																												// 94,
-																												// 95
+					"zelda", "zenpuzzle", "decepticoins", "deceptizelda", // 90-93
+					"sistersavior", "waferthinmints" }; // 94, 95
 
 		} else {
 			gamesPath = contGamesPath;
@@ -87,15 +84,16 @@ public class Test {
 					"lander", "mario", "pong", "ptsp", "racing" }; // 5 - 9
 		}
 
-		deceptiveGames = new String[] { "decepticoins", "deceptizelda", "sistersavior", "waferthinmints" };
+		deceptiveGames = new String[] { "decepticoins", "deceptizelda", "sistersavior", "waferthinmints", "butterflies",
+				"invest", "flower" }; // 0 - 6
 
 		// Other settings
 		boolean visuals = true;
 		int seed = new Random().nextInt();
 
 		// Game and level to play
-		int gameIdx = 2;
-		int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
+		int gameIdx = 0;
+		int levelIdx = 4; // level names from 0 to 4 (game_lvlN.txt).
 		// String game = gamesPath + games[gameIdx] + ".txt";
 		// String level1 = gamesPath + games[gameIdx] + "_lvl" + levelIdx + ".txt";
 
@@ -108,13 +106,14 @@ public class Test {
 		// executed. null if not to save.
 
 		// 1. This starts a game, in a level, played by a human.
-		// ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
+		ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
 
 		// 2. This plays a game in a level by the controller.
-		int M = 10;
-		for (int i = 0; i < M; i++) {
-			ArcadeMachine.runOneGame(game, level1, visuals, thorbjrn, recordActionsFile, seed, 0);
-		}
+		// int M = 10;
+		// for (int i = 0; i < M; i++) {
+		// ArcadeMachine.runOneGame(game, level1, visuals, sampleRandomController,
+		// recordActionsFile, seed, 0);
+		// }
 
 		// 3. This replays a game from an action file previously recorded
 		// String readActionsFile = recordActionsFile;

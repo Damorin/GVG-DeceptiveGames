@@ -2,11 +2,13 @@ BasicGame key_handler=Pulse square_size=40
     SpriteSet
         floor > Immovable img=newset/floor2
         hole   > Immovable color=DARKBLUE img=oryx/cspell4
-        avatar > MovingAvatar img=oryx/knight1
         box    > Passive img=newset/block1 shrinkfactor=0.8
         wall > Immovable img=oryx/wall3 autotiling=True
         coin > Immovable img=oryx/gold1
         switch > Immovable img=newset/floor3
+        moving >
+            avatar > MovingAvatar img=oryx/knight1
+            piranha > Chaser stype=avatar cooldown=8 img=newset/piranha1
     LevelMapping
         0 > floor hole
         1 > floor box
@@ -15,8 +17,10 @@ BasicGame key_handler=Pulse square_size=40
         . > floor
         c > floor coin
         s > floor switch
+        e > floor piranha
     InteractionSet
-        avatar wall > stepBack
+        moving wall > stepBack
+        avatar piranha > killSprite
         box avatar  > bounceForward
         box wall box  > undoAll
         box hole    > killSprite scoreChange=1
@@ -24,4 +28,5 @@ BasicGame key_handler=Pulse square_size=40
         switch avatar > spawnBehind stype=wall
         switch avatar > killSprite
     TerminationSet
+        SpriteCounter stype=avatar limit=0 win=False
         SpriteCounter stype=box    limit=0 win=True

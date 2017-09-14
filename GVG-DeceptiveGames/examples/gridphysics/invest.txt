@@ -32,7 +32,10 @@ BasicGame key_handler=Pulse square_size=40
         
         avatar switch3 > addTimer timer=90 ftype=transformToAll stype=switch3n stypeTo=switch3 scoreChange=10
         switch3 avatar > spawn stype=switch3n
-        switch3 avatar > killSprite scoreChange=-5
+        switch3 avatar > killSprite scoreChange=-15
+        
+        avatar floor > killIfScoreNegative
+        
         
     TerminationSet
         Timeout limit=1500 win=True
