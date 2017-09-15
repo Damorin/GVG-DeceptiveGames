@@ -4,6 +4,7 @@ BasicGame
     smallgoal  > Door color=GREEN img=oryx/doorclosed1
     largegoal > Door color=GOLD img=oryx/door2
     key   > Immovable color=ORANGE img=oryx/key2
+    vase > Immovable color=RED img=oryx/gold2
     sword > OrientedFlicker limit=5 singleton=True img=oryx/slash1
     movable >
       avatar  > ShootAvatar   stype=sword frameRate=8
@@ -24,6 +25,7 @@ BasicGame
     1 > floor monsterQuick
     2 > floor monsterNormal
     3 > floor monsterSlow
+    v > floor vase
     w > wall
     . > floor
     
@@ -34,6 +36,7 @@ BasicGame
     smallgoal withkey  > killSprite scoreChange=1
     largegoal nokey > killSprite scoreChange=10
     enemy sword > killSprite scoreChange=2
+    vase sword > killSprite scoreChange=1
     enemy enemy > stepBack
     avatar enemy > killSprite scoreChange=-1
     nokey key     > transformTo stype=withkey scoreChange=1 killSecond=True
