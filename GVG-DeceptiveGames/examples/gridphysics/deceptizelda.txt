@@ -35,6 +35,7 @@ BasicGame
     nokey smallgoal    > stepBack
     smallgoal withkey  > killSprite scoreChange=1
     largegoal nokey > killSprite scoreChange=10
+    largegoal withkey > killSprite scoreChange=10
     enemy sword > killSprite scoreChange=2
     vase sword > killSprite scoreChange=1
     enemy enemy > stepBack

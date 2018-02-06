@@ -9,7 +9,6 @@ BasicGame
         wfm > Resource color=GREEN img=newset/butter limit=11
         
     InteractionSet
-        avatar TIME > changeResource resource=wfm value=-1
         moving wall > stepBack
         wfm avatar > collectResource changeScore=1
         avatar wfm > killIfHasMore limit=11 resource=wfm
